@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "pinecone-text"
+version = "0.1.0"
+description = ""
+authors = ["Amnon Catav <catav.amnon1@gmail.com>"]
+readme = "README.md"
+packages = [{include = "pinecone_text"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+scikit-learn = "^1.2.1"
+pytest = "^7.2.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
