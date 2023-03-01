@@ -1,3 +1,4 @@
+from pytest import raises
 from pinecone_text.sparse import SPLADE
 
 
@@ -15,3 +16,10 @@ class TestSplade:
             set(output[0]["indices"]).intersection(set(output[1]["indices"]))
         ) / len(set(output[0]["indices"]).union(set(output[1]["indices"])))
         assert 0.5 < jacard < 1.0
+
+    def test_splade_init_invalid_max_seq_length(self):
+        with raises(ValueError):
+            SPLADE(max_seq_length=0)
+
+        with raises(ValueError):
+            SPLADE(max_seq_length=513)
