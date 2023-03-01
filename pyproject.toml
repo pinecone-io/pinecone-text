@@ -10,6 +10,8 @@ packages = [{include = "pinecone_text"}]
 python = "^3.8"
 scikit-learn = "^1.2.1"
 pytest = "^7.2.1"
+mypy = "^1.0.1"
+black = "^23.1.0"
 
 
 [build-system]
