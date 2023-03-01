@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "pinecone-text"
 version = "0.1.0"
-description = ""
-authors = ["Amnon Catav <catav.amnon1@gmail.com>"]
+description = "Text utilities library by Pinecone.io"
+authors = ["Pinecone.io"]
 readme = "README.md"
 packages = [{include = "pinecone_text"}]
 
