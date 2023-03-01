@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from pytest import approx
+from pytest import approx, raises
 from pinecone_text.sparse import BM25
 
 
@@ -86,3 +86,30 @@ class TestBM25:
         bm25 = BM25(tokenizer=lambda x: x.split())
         bm25.load_params(self.PARAMS_PATH)
         assert bm25.get_params() == self.bm25.get_params()
+
+    def test_encode_document_not_fitted(self):
+        bm25 = BM25(tokenizer=lambda x: x.split())
+        doc = "The quick brown fox jumps over the lazy dog newword"
+
+        with raises(ValueError):
+            bm25.encode_document(doc)
+
+    def test_encode_query_not_fitted(self):
+        bm25 = BM25(tokenizer=lambda x: x.split())
+        query = "The quick brown fox jumps over the lazy dog newword"
+
+        with raises(ValueError):
+            bm25.encode_query(query)
+
+    def test_get_params_not_fitted(self):
+        bm25 = BM25(tokenizer=lambda x: x.split())
+        with raises(ValueError):
+            bm25.get_params()
+
+    def test_init_invalid_vocab_size(self):
+
+        with raises(ValueError):
+            BM25(tokenizer=lambda x: x.split(), vocabulary_size=0)
+
+        with raises(ValueError):
+            BM25(tokenizer=lambda x: x.split(), vocabulary_size=2**32)

@@ -29,8 +29,8 @@ class BM25:
         """
         if vocabulary_size > 2**32 - 1:
             raise ValueError("vocabulary_size must be less than 2^32 - 1")
-        elif vocabulary_size < 0:
-            raise ValueError("vocabulary_size must be a positive integer")
+        elif vocabulary_size <= 0:
+            raise ValueError("vocabulary_size must be greater than 0")
 
         # Fixed params
         self.vocabulary_size: int = vocabulary_size
