@@ -5,7 +5,6 @@ from pinecone_text.sparse import BM25
 
 
 class TestBM25:
-
     cur_dir = os.path.dirname(os.path.abspath(__file__))
     PARAMS_PATH = os.path.join(cur_dir, "bm25_params.json")
 

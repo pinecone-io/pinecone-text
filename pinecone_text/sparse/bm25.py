@@ -1,10 +1,10 @@
 import json
 import numpy as np
 from scipy import sparse
-from typing import List, Callable, Optional, Dict, Union, cast, Tuple
+from typing import List, Callable, Optional, Dict, Union, Tuple
 from sklearn.feature_extraction.text import HashingVectorizer
 
-SparseVector = Dict[str, List[int]]
+from pinecone_text.sparse import SparseVector
 
 
 class BM25:
@@ -47,7 +47,7 @@ class BM25:
         )
 
         # Learned Params
-        self.doc_freq: Optional[Dict[int, int]] = None
+        self.doc_freq: Optional[Dict[int, float]] = None
         self.n_docs: Optional[int] = None
         self.avgdl: Optional[float] = None
 
@@ -62,7 +62,7 @@ class BM25:
         }
         return self
 
-    def encode_document(self, doc: str) -> SparseVector:
+    def encode_document(self, doc: str) -> dict[str, Union[list[int], list[float]]]:
         """Normalize document for BM25 scoring"""
         if self.doc_freq is None or self.n_docs is None or self.avgdl is None:
             raise ValueError("BM25 must be fit before encoding documents")
@@ -71,7 +71,7 @@ class BM25:
         norm_doc_tf = self._norm_doc_tf(doc_tf)
         return {
             "indices": [int(x) for x in doc_tf.indices],
-            "values": norm_doc_tf.tolist(),
+            "values": [float(x) for x in norm_doc_tf.tolist()],
         }
 
     def encode_query(self, query: str) -> SparseVector:
@@ -81,7 +81,10 @@ class BM25:
 
         query_tf = self._vectorizer.transform([query])
         indices, values = self._norm_query_tf(query_tf)
-        return {"indices": [int(x) for x in indices], "values": [float(x) for x in values]}
+        return {
+            "indices": [int(x) for x in indices],
+            "values": [float(x) for x in values],
+        }
 
     def store_params(self, path: str) -> None:
         """Store BM25 params to a file in JSON format"""
@@ -94,7 +97,9 @@ class BM25:
             params = json.load(f)
         return self.set_params(**params)
 
-    def get_params(self) -> Dict[str, Union[int, float, Dict[str, List[int]]]]:
+    def get_params(
+        self,
+    ) -> Dict[str, Union[int, float, Dict[str, List[Union[int, float]]]]]:
         if self.doc_freq is None or self.n_docs is None or self.avgdl is None:
             raise ValueError("BM25 must be fit before storing params")
 
