@@ -7,11 +7,20 @@ from pinecone_text.sparse import SparseVector
 
 class SPLADE:
 
-    """SPLADE sparse vector encoder.
+    """
+    SPLADE sparse vector encoder.
     Currently only supports inference with  naver/splade-cocondenser-ensembledistil
     """
 
     def __init__(self, max_seq_length: int = 256, device: str = "cpu"):
+        """
+        Args:
+            max_seq_length: Maximum sequence length for the model. Must be between 1 and 512.
+            device: Device to use for inference.
+        """
+        if not 0 < max_seq_length <= 512:
+            raise ValueError("max_seq_length must be between 1 and 512")
+
         model = "naver/splade-cocondenser-ensembledistil"
         self.tokenizer = AutoTokenizer.from_pretrained(model)
         self.model = AutoModelForMaskedLM.from_pretrained(model).to(device)
@@ -19,10 +28,12 @@ class SPLADE:
         self.device = device
 
     def __call__(self, texts: List[str]) -> List[SparseVector]:
-        """ "
+        """
+        Args:
+            texts: List of texts to encode.
+
         Returns a list of Splade sparse vectors, one for each input text.
         """
-
         inputs = self.tokenizer(
             texts,
             return_tensors="pt",
