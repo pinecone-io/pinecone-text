@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pinecone-text"
-version = "0.1.0"
+version = "0.1.1"
 description = "Text utilities library by Pinecone.io"
 authors = ["Pinecone.io"]
 readme = "README.md"

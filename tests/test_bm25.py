@@ -107,7 +107,6 @@ class TestBM25:
             bm25.get_params()
 
     def test_init_invalid_vocab_size(self):
-
         with raises(ValueError):
             BM25(tokenizer=lambda x: x.split(), vocabulary_size=0)
 

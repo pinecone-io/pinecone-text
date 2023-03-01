@@ -1,11 +1,11 @@
-from typing import List
+from typing import List, Union
 
 import torch
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from pinecone_text.sparse import SparseVector
 
 
-class SPLADE:
+class Splade:
 
     """
     SPLADE sparse vector encoder.
@@ -27,10 +27,12 @@ class SPLADE:
         self.max_seq_length = max_seq_length
         self.device = device
 
-    def __call__(self, texts: List[str]) -> List[SparseVector]:
+    def __call__(
+        self, texts: Union[str, List[str]]
+    ) -> Union[SparseVector, List[SparseVector]]:
         """
         Args:
-            texts: List of texts to encode.
+            texts: single or list of texts to encode.
 
         Returns a list of Splade sparse vectors, one for each input text.
         """
@@ -57,4 +59,4 @@ class SPLADE:
                 {"indices": nz_tokens.tolist(), "values": nz_weights.tolist()}
             )
 
-        return output
+        return output[0] if isinstance(texts, str) else output
