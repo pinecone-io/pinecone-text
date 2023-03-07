@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set Version
-      run: echo "VERSION=$(awk -F' = ' '/^\[tool.poetry\]$/{f=1} f&&/^version = /{print $2; exit}' pyproject.toml)" >> $GITHUB_ENV
+      run: echo "VERSION=$(awk -F' = ' '/^\[tool.poetry\]$/{f=1} f&&/^version = /{gsub(/"/, "", $2); print $2; exit}' pyproject.toml)" >> $GITHUB_ENV
 
     - name: Create tag
       uses: actions/github-script@v5
@@ -26,6 +26,8 @@ jobs:
 
     - name: Create a Release
       uses: elgohr/Github-Release-Action@v4
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
         title: Release ${{ env.VERSION }}
 
