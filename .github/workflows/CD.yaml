@@ -1,0 +1,36 @@
+name: CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set Version
+      run: echo "VERSION=$(awk -F' = ' '/^\[tool.poetry\]$/{f=1} f&&/^version = /{print $2; exit}' pyproject.toml)" >> $GITHUB_ENV
+
+    - name: Create tag
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'refs/tags/V${{ env.VERSION }}',
+            sha: context.sha
+          })
+
+    - name: Create a Release
+      uses: elgohr/Github-Release-Action@v4
+      with:
+        title: Release ${{ env.VERSION }}
+
+    - name: Build and publish to pypi
+      uses: JRubics/poetry-publish@v1.16
+      with:
+        repository_username: pinecone
+        repository_password: ${{ secrets.PYPI_PASSWORD }}
