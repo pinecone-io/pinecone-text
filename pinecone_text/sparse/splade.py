@@ -3,9 +3,10 @@ from typing import List, Union
 import torch
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from pinecone_text.sparse import SparseVector
+from pinecone_text.sparse.base_sparse_encoder import BaseSparseEncoder
 
 
-class Splade:
+class SPLADE(BaseSparseEncoder):
 
     """
     SPLADE sparse vector encoder.
@@ -27,7 +28,29 @@ class Splade:
         self.max_seq_length = max_seq_length
         self.device = device
 
-    def __call__(
+    def encode_documents(
+        self, texts: Union[str, List[str]]
+    ) -> Union[SparseVector, List[SparseVector]]:
+        """
+        encode documents to a sparse vector (for upsert to pinecone)
+
+        Args:
+            texts: a single or list of documents to encode as a string
+        """
+        return self._encode(texts)
+
+    def encode_queries(
+        self, texts: Union[str, List[str]]
+    ) -> Union[SparseVector, List[SparseVector]]:
+        """
+        encode queries to a sparse vector (for upsert to pinecone)
+
+        Args:
+            texts: a single or list of queries to encode as a string
+        """
+        return self._encode(texts)
+
+    def _encode(
         self, texts: Union[str, List[str]]
     ) -> Union[SparseVector, List[SparseVector]]:
         """
