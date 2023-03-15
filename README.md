@@ -53,9 +53,9 @@ sparse_vectors = splade(corpus)
 ```
 
 
-## Dense Encoding with Sentance Transformers
+## Dense Encoding with Sentence Transformers
 
-This is a thin wrapper over the Sentance Transformers models hosted on hugging face. [See full list of models](https://huggingface.co/sentence-transformers)
+This is a thin wrapper over the Sentence Transformers models hosted on hugging face. [See full list of models](https://huggingface.co/sentence-transformers)
 
 ```python
 from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
