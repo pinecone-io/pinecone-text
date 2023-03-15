@@ -27,6 +27,22 @@ class BM25(BaseSparseEncoder):
             vocabulary_size: The hash size to which the tokens are mapped to
             b: The length normalization parameter
             k1: The term frequency normalization parameter
+
+        Example:
+
+            ```python
+            from pinecone_text.sparse import BM25
+
+            bm25 = BM25(tokenizer=lambda x: x.split())
+
+            bm25.fit([
+                "The quick brown fox jumps over the lazy dog",
+                "The lazy dog is brown",
+                "The fox is brown"])
+
+            bm25.encode_documents("The brown fox is quick") # {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
+            bm25.encode_queries("Which fox is brown?") # # {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
+            ```
         """
         if vocabulary_size > 2**32 - 1:
             raise ValueError("vocabulary_size must be less than 2^32 - 1")

@@ -51,3 +51,18 @@ splade = SPLADE()
 sparse_vectors = splade(corpus)
 # [{"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}, ...]
 ```
+
+
+## Dense Encoding with Sentance Transformers
+
+This is a thin wrapper over the Sentance Transformers models hosted on hugging face. [See full list of models](https://huggingface.co/sentence-transformers)
+
+```python
+from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
+
+encoder = SentenceTransformerEncoder("sentence-transformers/all-MiniLM-L6-v2")
+
+encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
+
+encoder.encode_queries(["Who jumped over the lazy dog?"])
+```
