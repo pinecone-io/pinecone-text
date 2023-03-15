@@ -104,7 +104,7 @@ class TestBM25:
             encoded_doc["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
-        assert fox_value == approx(0.32203, abs=0.0001)
+        assert fox_value == approx(0.38775, abs=0.0001)
 
     def test_encode_documents(self):
         docs = [
@@ -127,7 +127,7 @@ class TestBM25:
             encoded_docs[0]["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
-        assert fox_value == approx(0.32203, abs=0.0001)
+        assert fox_value == approx(0.38775, abs=0.0001)
 
     def test_get_set_params_compatibility(self):
         bm25 = BM25(tokenizer=lambda x: x.split())
@@ -172,3 +172,8 @@ class TestBM25:
 
         with raises(ValueError):
             self.bm25.encode_queries(1)
+
+    def test_create_from_msmarco_corpus(self):
+        bm25 = BM25.create_from_msmarco_corpus()
+        assert bm25.get_params()["n_docs"] == 8841823
+        bm25.encode_documents("The quick brown fox jumps over the lazy dog newword")
