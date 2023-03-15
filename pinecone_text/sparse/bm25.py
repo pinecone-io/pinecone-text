@@ -33,7 +33,7 @@ class BM25(BaseSparseEncoder):
             ```python
             from pinecone_text.sparse import BM25
 
-            bm25 = BM25(tokenizer=simple_tokenizer)
+            bm25 = BM25(tokenizer=lambda x: x.split())
 
             bm25.fit([
                 "The quick brown fox jumps over the lazy dog",

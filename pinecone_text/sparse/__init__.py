@@ -19,7 +19,7 @@ Pinecone. For more information, see the [Pinecone documentation](https://docs.pi
 ## SPLADE
 SPLADE is a Transformer based encoder, that uses sophisticated expansion to encode documents and queries in a sparse representation.
 This allows a semantic search to be performed on the sparse vectors. The SPLADE encoder is based on the work done by the research team in Naver Labs Europe.
-For more information, see the [SPLADE paper](https://arxiv.org/abs/2105.12755). The SPLADE encoder is currently only available for inference only.
+For more information, see the [SPLADE paper](https://arxiv.org/abs/2109.10086). The SPLADE encoder is currently only available for inference only.
 """
 
 from typing import Union, Dict, List
