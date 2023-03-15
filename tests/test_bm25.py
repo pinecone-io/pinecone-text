@@ -43,7 +43,7 @@ class TestBM25:
 
     def test_encode_query(self):
         query = "The quick brown fox jumps over the lazy dog newword"
-        encoded_query = self.bm25.encode_query(query)
+        encoded_query = self.bm25.encode_queries(query)
 
         assert len(encoded_query["indices"]) == len(encoded_query["values"])
         assert set(encoded_query["indices"]) == set(
@@ -61,9 +61,39 @@ class TestBM25:
 
         assert newword_value == approx(0.371861, abs=0.0001)
 
+    def test_encode_queries(self):
+        queries = [
+            "The quick brown fox jumps over the lazy dog newword",
+            "The quick brown fox jumps over the lazy dog newword",
+        ]
+        encoded_queries = self.bm25.encode_queries(queries)
+
+        assert len(encoded_queries) == len(queries)
+        assert len(encoded_queries[0]["indices"]) == len(encoded_queries[0]["values"])
+        assert len(encoded_queries[1]["indices"]) == len(encoded_queries[1]["values"])
+        assert set(encoded_queries[0]["indices"]) == set(
+            [self.get_token_hash(t, self.bm25) for t in queries[0].split()]
+        )
+        assert set(encoded_queries[1]["indices"]) == set(
+            [self.get_token_hash(t, self.bm25) for t in queries[1].split()]
+        )
+
+        fox_value = encoded_queries[0]["values"][
+            encoded_queries[0]["indices"].index(self.get_token_hash("fox", self.bm25))
+        ]
+        assert fox_value == approx(0.020173, abs=0.0001)
+
+        newword_value = encoded_queries[0]["values"][
+            encoded_queries[0]["indices"].index(
+                self.get_token_hash("newword", self.bm25)
+            )
+        ]
+
+        assert newword_value == approx(0.371861, abs=0.0001)
+
     def test_encode_document(self):
         doc = "The quick brown fox jumps over the lazy dog newword"
-        encoded_doc = self.bm25.encode_document(doc)
+        encoded_doc = self.bm25.encode_documents(doc)
 
         assert len(encoded_doc["indices"]) == len(encoded_doc["values"])
         assert set(encoded_doc["indices"]) == set(
@@ -72,6 +102,29 @@ class TestBM25:
 
         fox_value = encoded_doc["values"][
             encoded_doc["indices"].index(self.get_token_hash("fox", self.bm25))
+        ]
+
+        assert fox_value == approx(0.32203, abs=0.0001)
+
+    def test_encode_documents(self):
+        docs = [
+            "The quick brown fox jumps over the lazy dog newword",
+            "The quick brown fox jumps over the lazy dog newword",
+        ]
+        encoded_docs = self.bm25.encode_documents(docs)
+
+        assert len(encoded_docs) == len(docs)
+        assert len(encoded_docs[0]["indices"]) == len(encoded_docs[0]["values"])
+        assert len(encoded_docs[1]["indices"]) == len(encoded_docs[1]["values"])
+        assert set(encoded_docs[0]["indices"]) == set(
+            [self.get_token_hash(t, self.bm25) for t in docs[0].split()]
+        )
+        assert set(encoded_docs[1]["indices"]) == set(
+            [self.get_token_hash(t, self.bm25) for t in docs[1].split()]
+        )
+
+        fox_value = encoded_docs[0]["values"][
+            encoded_docs[0]["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
         assert fox_value == approx(0.32203, abs=0.0001)
@@ -92,14 +145,14 @@ class TestBM25:
         doc = "The quick brown fox jumps over the lazy dog newword"
 
         with raises(ValueError):
-            bm25.encode_document(doc)
+            bm25.encode_documents(doc)
 
     def test_encode_query_not_fitted(self):
         bm25 = BM25(tokenizer=lambda x: x.split())
         query = "The quick brown fox jumps over the lazy dog newword"
 
         with raises(ValueError):
-            bm25.encode_query(query)
+            bm25.encode_queries(query)
 
     def test_get_params_not_fitted(self):
         bm25 = BM25(tokenizer=lambda x: x.split())
@@ -112,3 +165,10 @@ class TestBM25:
 
         with raises(ValueError):
             BM25(tokenizer=lambda x: x.split(), vocabulary_size=2**32)
+
+    def test_wrong_input_type(self):
+        with raises(ValueError):
+            self.bm25.encode_documents(1)
+
+        with raises(ValueError):
+            self.bm25.encode_queries(1)

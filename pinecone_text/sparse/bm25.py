@@ -5,9 +5,10 @@ from typing import List, Callable, Optional, Dict, Union, Tuple
 from sklearn.feature_extraction.text import HashingVectorizer
 
 from pinecone_text.sparse import SparseVector
+from pinecone_text.sparse.base_sparse_encoder import BaseSparseEncoder
 
 
-class BM25:
+class BM25(BaseSparseEncoder):
 
     """OKAPI BM25 implementation for single fit to a corpus (no continuous corpus updates supported)"""
 
@@ -69,34 +70,54 @@ class BM25:
         }
         return self
 
-    def encode_document(self, doc: str) -> SparseVector:
+    def encode_documents(
+        self, texts: Union[str, List[str]]
+    ) -> Union[SparseVector, List[SparseVector]]:
         """
-        encode document to a sparse vector (for upsert to pinecone)
+        encode documents to a sparse vector (for upsert to pinecone)
 
         Args:
-            doc: the document to encode as a string
+            texts: a single or list of documents to encode as a string
         """
         if self.doc_freq is None or self.n_docs is None or self.avgdl is None:
             raise ValueError("BM25 must be fit before encoding documents")
 
-        doc_tf = self._vectorizer.transform([doc])
+        if isinstance(texts, str):
+            return self._encode_single_document(texts)
+        elif isinstance(texts, list):
+            return [self._encode_single_document(text) for text in texts]
+        else:
+            raise ValueError("texts must be a string or list of strings")
+
+    def _encode_single_document(self, text: str) -> SparseVector:
+        doc_tf = self._vectorizer.transform([text])
         norm_doc_tf = self._norm_doc_tf(doc_tf)
         return {
             "indices": [int(x) for x in doc_tf.indices],
             "values": [float(x) for x in norm_doc_tf.tolist()],
         }
 
-    def encode_query(self, query: str) -> SparseVector:
+    def encode_queries(
+        self, texts: Union[str, List[str]]
+    ) -> Union[SparseVector, List[SparseVector]]:
         """
         encode query to a sparse vector
 
         Args:
-            query: the query to encode as a string
+            texts: a single or list of queries to encode as a string
         """
         if self.doc_freq is None or self.n_docs is None or self.avgdl is None:
             raise ValueError("BM25 must be fit before encoding queries")
 
-        query_tf = self._vectorizer.transform([query])
+        if isinstance(texts, str):
+            return self._encode_single_query(texts)
+        elif isinstance(texts, list):
+            return [self._encode_single_query(text) for text in texts]
+        else:
+            raise ValueError("texts must be a string or list of strings")
+
+    def _encode_single_query(self, text: str) -> SparseVector:
+        query_tf = self._vectorizer.transform([text])
         indices, values = self._norm_query_tf(query_tf)
         return {
             "indices": [int(x) for x in indices],
