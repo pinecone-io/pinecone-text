@@ -30,7 +30,6 @@ jobs:
         with:
           path: docs/
 
-  # Deploy the artifact to GitHub pages.
   # This is a separate job so that only actions/deploy-pages has the necessary permissions.
   deploy:
     needs: build
