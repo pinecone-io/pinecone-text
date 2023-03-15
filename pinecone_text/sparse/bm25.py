@@ -29,17 +29,17 @@ class BM25(BaseSparseEncoder):
             k1: The term frequency normalization parameter
 
         Example:
-        
+
             ```python
             from pinecone_text.sparse import BM25
 
             bm25 = BM25(tokenizer=simple_tokenizer)
-            
+
             bm25.fit([
-                "The quick brown fox jumps over the lazy dog", 
+                "The quick brown fox jumps over the lazy dog",
                 "The lazy dog is brown",
                 "The fox is brown"])
-            
+
             bm25.encode_documents("The brown fox is quick") # {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
             bm25.encode_queries("Which fox is brown?") # # {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
             ```

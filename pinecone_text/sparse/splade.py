@@ -25,7 +25,7 @@ class SPLADE(BaseSparseEncoder):
             from pinecone_text.sparse import SPLADE
 
             splade = SPLADE()
-            
+
             splade.encode_documents("this is a document") # [{"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}, ...]
             ```
         """
