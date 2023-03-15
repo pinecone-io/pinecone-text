@@ -1,7 +1,7 @@
 name: docs
 
 # build the documentation whenever there are new commits on main
-on: [workflow_dispatch]
+on: workflow_dispatch
 
 # security: restrict permissions for CI jobs.
 permissions:
