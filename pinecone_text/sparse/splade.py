@@ -18,6 +18,16 @@ class SPLADE(BaseSparseEncoder):
         Args:
             max_seq_length: Maximum sequence length for the model. Must be between 1 and 512.
             device: Device to use for inference.
+
+        Example:
+
+            ```python
+            from pinecone_text.sparse import SPLADE
+
+            splade = SPLADE()
+            
+            splade.encode_documents("this is a document") # [{"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}, ...]
+            ```
         """
         if not 0 < max_seq_length <= 512:
             raise ValueError("max_seq_length must be between 1 and 512")
