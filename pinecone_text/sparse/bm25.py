@@ -84,8 +84,10 @@ class BM25(BaseSparseEncoder):
 
         if isinstance(texts, str):
             return self._encode_single_document(texts)
-        else:
+        elif isinstance(texts, list):
             return [self._encode_single_document(text) for text in texts]
+        else:
+            raise ValueError("texts must be a string or list of strings")
 
     def _encode_single_document(self, text: str) -> SparseVector:
         doc_tf = self._vectorizer.transform([text])
@@ -109,8 +111,10 @@ class BM25(BaseSparseEncoder):
 
         if isinstance(texts, str):
             return self._encode_single_query(texts)
-        else:
+        elif isinstance(texts, list):
             return [self._encode_single_query(text) for text in texts]
+        else:
+            raise ValueError("texts must be a string or list of strings")
 
     def _encode_single_query(self, text: str) -> SparseVector:
         query_tf = self._vectorizer.transform([text])

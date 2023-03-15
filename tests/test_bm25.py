@@ -165,3 +165,10 @@ class TestBM25:
 
         with raises(ValueError):
             BM25(tokenizer=lambda x: x.split(), vocabulary_size=2**32)
+
+    def test_wrong_input_type(self):
+        with raises(ValueError):
+            self.bm25.encode_documents(1)
+
+        with raises(ValueError):
+            self.bm25.encode_queries(1)
