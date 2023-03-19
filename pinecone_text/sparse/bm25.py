@@ -1,7 +1,11 @@
 import json
 import numpy as np
+import tempfile
+from pathlib import Path
+
+import wget
 from scipy import sparse
-from typing import List, Callable, Optional, Dict, Union, Tuple
+from typing import List, Callable, Optional, Dict, Union, Tuple, Any
 from sklearn.feature_extraction.text import HashingVectorizer
 
 from pinecone_text.sparse import SparseVector
@@ -17,7 +21,7 @@ class BM25(BaseSparseEncoder):
         tokenizer: Callable[[str], List[str]],
         vocabulary_size: int = 2**18,
         b: float = 0.75,
-        k1: float = 1.6,
+        k1: float = 1.2,
     ):
         """
         OKapi BM25 with HashingVectorizer
@@ -140,7 +144,7 @@ class BM25(BaseSparseEncoder):
             "values": [float(x) for x in values],
         }
 
-    def store_params(self, path: str) -> None:
+    def dump(self, path: str) -> None:
         """
         Store BM25 params to a file in JSON format
 
@@ -150,7 +154,7 @@ class BM25(BaseSparseEncoder):
         with open(path, "w") as f:
             json.dump(self.get_params(), f)
 
-    def load_params(self, path: str) -> "BM25":
+    def load(self, path: str) -> "BM25":
         """
         Load BM25 params from a file in JSON format
 
@@ -227,3 +231,14 @@ class BM25(BaseSparseEncoder):
         tf = np.array([self.doc_freq.get(idx, 0) for idx in query_tf.indices])  # type: ignore
         idf = np.log((self.n_docs + 1) / (tf + 0.5))  # type: ignore
         return query_tf.indices, idf / idf.sum()
+
+    @staticmethod
+    def default() -> "BM25":
+        """Create a BM25 model from pre-made params for the MS MARCO passages corpus"""
+        bm25 = BM25(lambda x: x.split())
+        url = "https://storage.googleapis.com/pinecone-datasets-dev/bm25_params/msmarco_bm25_params.json"
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir, "msmarco_bm25_params.json")
+            wget.download(url, str(tmp_path))
+            bm25.load(str(tmp_path))
+        return bm25

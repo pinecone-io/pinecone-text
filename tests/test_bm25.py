@@ -104,7 +104,7 @@ class TestBM25:
             encoded_doc["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
-        assert fox_value == approx(0.32203, abs=0.0001)
+        assert fox_value == approx(0.38775, abs=0.0001)
 
     def test_encode_documents(self):
         docs = [
@@ -127,7 +127,7 @@ class TestBM25:
             encoded_docs[0]["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
-        assert fox_value == approx(0.32203, abs=0.0001)
+        assert fox_value == approx(0.38775, abs=0.0001)
 
     def test_get_set_params_compatibility(self):
         bm25 = BM25(tokenizer=lambda x: x.split())
@@ -135,9 +135,9 @@ class TestBM25:
         assert bm25.get_params() == self.bm25.get_params()
 
     def test_store_load_params(self):
-        self.bm25.store_params(self.PARAMS_PATH)
+        self.bm25.dump(self.PARAMS_PATH)
         bm25 = BM25(tokenizer=lambda x: x.split())
-        bm25.load_params(self.PARAMS_PATH)
+        bm25.load(self.PARAMS_PATH)
         assert bm25.get_params() == self.bm25.get_params()
 
     def test_encode_document_not_fitted(self):
@@ -172,3 +172,8 @@ class TestBM25:
 
         with raises(ValueError):
             self.bm25.encode_queries(1)
+
+    def test_create_default(self):
+        bm25 = BM25.default()
+        assert bm25.get_params()["n_docs"] == 8841823
+        bm25.encode_documents("The quick brown fox jumps over the lazy dog newword")
