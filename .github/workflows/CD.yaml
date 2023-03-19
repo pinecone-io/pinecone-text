@@ -43,5 +43,6 @@ jobs:
 
     - name: Build and publish to pypi
       run: |
+        curl -sSL https://install.python-poetry.org | python3.10 -
         poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
         poetry publish --build
