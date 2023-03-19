@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "pinecone-text"
-version = "0.3.0"
+version = "0.3.1"
 description = "Text utilities library by Pinecone.io"
 authors = ["Pinecone.io"]
 readme = "README.md"
 packages = [{include = "pinecone_text"}]
 
 [tool.poetry.dependencies]
-python = ">=3.8 <3.11"
+python = "^3.8 || ^3.9 || ^3.10"
 scikit-learn = "^1.2.1"
 torch = "^1.13.1"
 transformers = "^4.26.1"
