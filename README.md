@@ -29,10 +29,17 @@ query_sparse_vector = bm25.encode_queries("Which fox is brown?")
 # {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
 
 # store BM25 params as json
-bm25.store_params("bm25_params.json")
+bm25.dump("bm25_params.json")
 
 # load BM25 params from json
-bm25.load_params("bm25_params.json")
+bm25.load("bm25_params.json")
+```
+
+#### Load default parameters
+If you want to use the default parameters for BM25, you can call the `default` method.
+The default parameters were fitted on the [MS MARCO](https://microsoft.github.io/msmarco/)  passage ranking dataset.
+```python
+bm25 = BM25.default()
 ```
 
 ### Splade
