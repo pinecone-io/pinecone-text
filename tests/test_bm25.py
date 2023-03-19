@@ -135,9 +135,9 @@ class TestBM25:
         assert bm25.get_params() == self.bm25.get_params()
 
     def test_store_load_params(self):
-        self.bm25.dump_params(self.PARAMS_PATH)
+        self.bm25.dump(self.PARAMS_PATH)
         bm25 = BM25(tokenizer=lambda x: x.split())
-        bm25.load_params(self.PARAMS_PATH)
+        bm25.load(self.PARAMS_PATH)
         assert bm25.get_params() == self.bm25.get_params()
 
     def test_encode_document_not_fitted(self):

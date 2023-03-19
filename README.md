@@ -29,10 +29,10 @@ query_sparse_vector = bm25.encode_queries("Which fox is brown?")
 # {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
 
 # store BM25 params as json
-bm25.dump_params("bm25_params.json")
+bm25.dump("bm25_params.json")
 
 # load BM25 params from json
-bm25.load_params("bm25_params.json")
+bm25.load("bm25_params.json")
 ```
 
 #### Load default parameters
