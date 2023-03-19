@@ -144,7 +144,7 @@ class BM25(BaseSparseEncoder):
             "values": [float(x) for x in values],
         }
 
-    def store_params(self, path: str) -> None:
+    def dump_params(self, path: str) -> None:
         """
         Store BM25 params to a file in JSON format
 
@@ -233,18 +233,12 @@ class BM25(BaseSparseEncoder):
         return query_tf.indices, idf / idf.sum()
 
     @staticmethod
-    def create_from_msmarco_corpus() -> "BM25":
+    def default() -> "BM25":
         """Create a BM25 model from pre-made params for the MS MARCO passages corpus"""
         bm25 = BM25(lambda x: x.split())
-        bm25.set_params(**bm25._load_msmarco_params())
-        return bm25
-
-    def _load_msmarco_params(self) -> Dict[str, Any]:
-        """Download pre-made BM25 params from pinecone's public bucket"""
         url = "https://storage.googleapis.com/pinecone-datasets-dev/bm25_params/msmarco_bm25_params.json"
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_path = Path(tmp_dir, "msmarco_bm25_params.json")
             wget.download(url, str(tmp_path))
-
-            with open(tmp_path, "r") as f:
-                return json.load(f)
+            bm25.load_params(str(tmp_path))
+        return bm25

@@ -135,7 +135,7 @@ class TestBM25:
         assert bm25.get_params() == self.bm25.get_params()
 
     def test_store_load_params(self):
-        self.bm25.store_params(self.PARAMS_PATH)
+        self.bm25.dump_params(self.PARAMS_PATH)
         bm25 = BM25(tokenizer=lambda x: x.split())
         bm25.load_params(self.PARAMS_PATH)
         assert bm25.get_params() == self.bm25.get_params()
@@ -173,7 +173,7 @@ class TestBM25:
         with raises(ValueError):
             self.bm25.encode_queries(1)
 
-    def test_create_from_msmarco_corpus(self):
-        bm25 = BM25.create_from_msmarco_corpus()
+    def test_create_default(self):
+        bm25 = BM25.default()
         assert bm25.get_params()["n_docs"] == 8841823
         bm25.encode_documents("The quick brown fox jumps over the lazy dog newword")
