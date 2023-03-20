@@ -339,14 +339,14 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.2.1)", "pytest (>=7.2.2)", "pyt
 
 [[package]]
 name = "huggingface-hub"
-version = "0.13.2"
+version = "0.13.3"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "huggingface_hub-0.13.2-py3-none-any.whl", hash = "sha256:745c4cbd97a27fc5c1c6c89cb477662004c88bc3dd89bafc1a27ef24af77f944"},
-    {file = "huggingface_hub-0.13.2.tar.gz", hash = "sha256:246e8eb39b6e6e9d9d5846e4b56c265cdf1872f48ba5a13a1321295d371626f5"},
+    {file = "huggingface_hub-0.13.3-py3-none-any.whl", hash = "sha256:f73a298a55028575334f9670d86b8171a4dd890b320315f3ad28a20b9eb3b5bc"},
+    {file = "huggingface_hub-0.13.3.tar.gz", hash = "sha256:1f95f65c5e7aa76728701402f55b697ee8a8b50234adda91fbdbb81038fbcd21"},
 ]
 
 [package.dependencies]
@@ -1760,4 +1760,4 @@ test = ["pytest (>=6.0.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "2ce02b13e147e7284111892041c1dba39886171f090c8118f3bfe974ec6e5892"
+content-hash = "3519f56e91e40272635aa4e4bd12c4c34fafeaf4f1c17ad2c42fb80ee67f568b"
