@@ -309,14 +309,14 @@ testing = ["covdefaults (>=2.3)", "coverage (>=7.2.1)", "pytest (>=7.2.2)", "pyt
 
 [[package]]
 name = "huggingface-hub"
-version = "0.13.2"
+version = "0.13.3"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "huggingface_hub-0.13.2-py3-none-any.whl", hash = "sha256:745c4cbd97a27fc5c1c6c89cb477662004c88bc3dd89bafc1a27ef24af77f944"},
-    {file = "huggingface_hub-0.13.2.tar.gz", hash = "sha256:246e8eb39b6e6e9d9d5846e4b56c265cdf1872f48ba5a13a1321295d371626f5"},
+    {file = "huggingface_hub-0.13.3-py3-none-any.whl", hash = "sha256:f73a298a55028575334f9670d86b8171a4dd890b320315f3ad28a20b9eb3b5bc"},
+    {file = "huggingface_hub-0.13.3.tar.gz", hash = "sha256:1f95f65c5e7aa76728701402f55b697ee8a8b50234adda91fbdbb81038fbcd21"},
 ]
 
 [package.dependencies]
@@ -1399,14 +1399,14 @@ telegram = ["requests"]
 
 [[package]]
 name = "transformers"
-version = "4.27.1"
+version = "4.27.2"
 description = "State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow"
 category = "main"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "transformers-4.27.1-py3-none-any.whl", hash = "sha256:b8cf844cbeaefd24b07f7ab1550af11b5d9cf0a7d09e5f4fedede9b15a3da2c0"},
-    {file = "transformers-4.27.1.tar.gz", hash = "sha256:05120d91e407c0d3db364f5d0710cdacccd15f67114b075f161a71535c133695"},
+    {file = "transformers-4.27.2-py3-none-any.whl", hash = "sha256:499a5ac4c1160f27b71bbd3c080e36ee3fd8cc2922aeaa52a8b163adf5ff4f19"},
+    {file = "transformers-4.27.2.tar.gz", hash = "sha256:940a6c0e04d89d14d012ee7214f8fd4e2aa2924a70a41106e0beb6ff25227752"},
 ]
 
 [package.dependencies]
@@ -1523,4 +1523,4 @@ test = ["pytest (>=6.0.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8 <3.11"
-content-hash = "08028b2a3deb96b47bb2032e0635017de0a9f48a238c262c8785e6b1dc8bb0cc"
+content-hash = "7a3c66bbfaf10372e4a61d987efc3fd3c8259545e6277cd2f1210d8602710df2"

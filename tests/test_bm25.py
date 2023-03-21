@@ -2,6 +2,7 @@ import os
 import numpy as np
 from pytest import approx, raises
 from pinecone_text.sparse import BM25
+from pinecone_text.sparse.bm25 import BM25Tokenizer
 
 
 class TestBM25:
@@ -33,7 +34,7 @@ class TestBM25:
     def test_fit_default_params(self):
         assert self.bm25.n_docs == len(self.corpus)
         expected_avgdl = np.mean(
-            [len(set([w.lower() for w in doc.split()])) for doc in self.corpus]
+            [len(set(BM25Tokenizer()(doc))) for doc in self.corpus]
         )
         assert self.bm25.avgdl == expected_avgdl
 
@@ -46,7 +47,8 @@ class TestBM25:
         encoded_query = self.bm25.encode_queries(query)
 
         assert len(encoded_query["indices"]) == len(encoded_query["values"])
-        assert set(encoded_query["indices"]) == set(
+        assert set(encoded_query["indices"
+                                 ""]) == set(
             [self.get_token_hash(t, self.bm25) for t in query.split()]
         )
 

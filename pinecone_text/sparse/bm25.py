@@ -1,12 +1,15 @@
 import json
+import re
+from nltk.stem.snowball import SnowballStemmer
 import numpy as np
 import tempfile
 from pathlib import Path
 
 import wget
 from scipy import sparse
-from typing import List, Callable, Optional, Dict, Union, Tuple, Any
+from typing import List, Callable, Optional, Dict, Union, Tuple
 from sklearn.feature_extraction.text import HashingVectorizer
+from sklearn.feature_extraction._stop_words import ENGLISH_STOP_WORDS
 
 from pinecone_text.sparse import SparseVector
 from pinecone_text.sparse.base_sparse_encoder import BaseSparseEncoder
@@ -18,10 +21,17 @@ class BM25(BaseSparseEncoder):
 
     def __init__(
         self,
-        tokenizer: Callable[[str], List[str]],
+        tokenizer: Optional[Callable[[str], List[str]]] = None,
         vocabulary_size: int = 2**18,
         b: float = 0.75,
         k1: float = 1.2,
+        min_tf: int = 2,
+        lower_case: bool = True,
+        remove_en_stop_words: bool = True,
+        remove_punctuation: bool = True,
+        remove_single_chars: bool = True,
+        stem: bool = True,
+        stemmer_language: str = "english",
     ):
         """
         OKapi BM25 with HashingVectorizer
@@ -58,21 +68,35 @@ class BM25(BaseSparseEncoder):
         self.b: float = b
         self.k1: float = k1
 
-        self._tokenizer: Callable[[str], List[str]] = tokenizer
+        bm25_tokenizer = BM25Tokenizer(tokenizer=tokenizer,
+                                       lower_case=lower_case,
+                                       remove_en_stop_words=remove_en_stop_words,
+                                       remove_punctuation=remove_punctuation,
+                                       remove_single_chars=remove_single_chars,
+                                       stem=stem,
+                                       stemmer_language=stemmer_language)
         self._vectorizer = HashingVectorizer(
             n_features=self.vocabulary_size,
             token_pattern=None,
-            tokenizer=tokenizer,
+            tokenizer=bm25_tokenizer,
             norm=None,
             alternate_sign=False,
-            binary=True,
-            lowercase=True,
+            binary=True
         )
 
         # Learned Params
         self.doc_freq: Optional[Dict[int, float]] = None
         self.n_docs: Optional[int] = None
         self.avgdl: Optional[float] = None
+
+    def _norm_token(self,
+                    token,
+                    lower_case: bool,
+                    remove_stop_words: bool,
+                    remove_punctuation: bool,
+                    remove_single_chars: bool,
+                    stem: bool) -> Callable[[str], List[str]]:
+        pass
 
     def fit(self, corpus: List[str]) -> "BM25":
         """
@@ -242,3 +266,41 @@ class BM25(BaseSparseEncoder):
             wget.download(url, str(tmp_path))
             bm25.load(str(tmp_path))
         return bm25
+
+
+class BM25Tokenizer:
+
+    PUNCTUATION_SYMBOLS = "!\"#$%&()*+-./:;<=>?@[\]^_`{|}~\n"
+
+    def __init__(self,
+                 tokenizer: Optional[Callable[[str], List[str]]] = None,
+                 lower_case: bool = True,
+                 remove_en_stop_words: bool = True,
+                 remove_punctuation: bool = True,
+                 remove_single_chars: bool = True,
+                 stem: bool  = True,
+                 stemmer_language: str = "english"):
+        self._tokenizer = tokenizer
+        self._lower_case = lower_case
+        self._remove_en_stop_words = remove_en_stop_words
+        self._remove_punctuation = remove_punctuation
+        self._remove_single_chars = remove_single_chars
+        self._stem = stem
+        self._stemmer = SnowballStemmer(stemmer_language)
+
+    def __call__(self, text: str) -> List[str]:
+        if self._tokenizer:
+            tokens = self._tokenizer(text)
+        else:
+            tokens = text.split()
+        if self._lower_case:
+            tokens = [token.lower() for token in tokens]
+        if self._remove_punctuation:
+            tokens = [re.sub(f"[{self.PUNCTUATION_SYMBOLS}]", "", token) for token in tokens]
+        if self._remove_en_stop_words:
+            tokens = [token for token in tokens if token not in ENGLISH_STOP_WORDS]
+        if self._stem:
+            tokens = [self._stemmer.stem(token) for token in tokens]
+        if self._remove_single_chars:
+            tokens = [token for token in tokens if len(token) > 1]
+        return tokens
