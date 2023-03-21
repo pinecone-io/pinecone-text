@@ -59,14 +59,22 @@ class BM25(BaseSparseEncoder):
         self.k1: float = k1
 
         self._tokenizer: Callable[[str], List[str]] = tokenizer
-        self._vectorizer = HashingVectorizer(
+        self._doc_freq_vectorizer = HashingVectorizer(
             n_features=self.vocabulary_size,
             token_pattern=None,
-            tokenizer=tokenizer,
+            tokenizer=self._tokenizer,
             norm=None,
             alternate_sign=False,
             binary=True,
-            lowercase=True,
+        )
+
+        self._tf_vectorizer = HashingVectorizer(
+            n_features=self.vocabulary_size,
+            token_pattern=None,
+            tokenizer=self._tokenizer,
+            norm=None,
+            alternate_sign=False,
+            binary=False,
         )
 
         # Learned Params
@@ -81,12 +89,14 @@ class BM25(BaseSparseEncoder):
         Args:
             corpus: list of texts to fit BM25 with
         """
-        doc_tf_matrix = self._vectorizer.transform(corpus)
-        self.avgdl = doc_tf_matrix.sum(1).mean().item()
+        doc_tf_matrix = self._doc_freq_vectorizer.transform(corpus)
+        tf_matrix = self._tf_vectorizer.transform(corpus)
+        self.avgdl = tf_matrix.sum(axis=1).mean()
         self.n_docs = doc_tf_matrix.shape[0]
-        tf_vector = sparse.csr_matrix(doc_tf_matrix.sum(axis=0))
+        doc_tf_vector = sparse.csr_matrix(doc_tf_matrix.sum(axis=0))
         self.doc_freq = {
-            int(idx): float(val) for idx, val in zip(tf_vector.indices, tf_vector.data)
+            int(idx): float(val)
+            for idx, val in zip(doc_tf_vector.indices, doc_tf_vector.data)
         }
         return self
 
@@ -110,7 +120,7 @@ class BM25(BaseSparseEncoder):
             raise ValueError("texts must be a string or list of strings")
 
     def _encode_single_document(self, text: str) -> SparseVector:
-        doc_tf = self._vectorizer.transform([text])
+        doc_tf = self._tf_vectorizer.transform([text])
         norm_doc_tf = self._norm_doc_tf(doc_tf)
         return {
             "indices": [int(x) for x in doc_tf.indices],
@@ -137,7 +147,7 @@ class BM25(BaseSparseEncoder):
             raise ValueError("texts must be a string or list of strings")
 
     def _encode_single_query(self, text: str) -> SparseVector:
-        query_tf = self._vectorizer.transform([text])
+        query_tf = self._doc_freq_vectorizer.transform([text])
         indices, values = self._norm_query_tf(query_tf)
         return {
             "indices": [int(x) for x in indices],
