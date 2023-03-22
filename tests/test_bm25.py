@@ -29,12 +29,13 @@ class TestBM25:
             os.remove(self.PARAMS_PATH)
 
     def get_token_hash(self, token, bm25: BM25):
-        return bm25._vectorizer.transform([token]).indices[0].item()
+        return bm25._doc_freq_vectorizer.transform([token]).indices[0].item()
 
     def test_fit_default_params(self):
         assert self.bm25.n_docs == len(self.corpus)
         expected_avgdl = np.mean(
             [len(set(BM25Tokenizer()(doc))) for doc in self.corpus]
+            [len([w.lower() for w in doc.split()]) for doc in self.corpus]
         )
         assert self.bm25.avgdl == expected_avgdl
 
@@ -106,7 +107,7 @@ class TestBM25:
             encoded_doc["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
-        assert fox_value == approx(0.38775, abs=0.0001)
+        assert fox_value == approx(0.38976, abs=0.0001)
 
     def test_encode_documents(self):
         docs = [
@@ -129,7 +130,7 @@ class TestBM25:
             encoded_docs[0]["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
-        assert fox_value == approx(0.38775, abs=0.0001)
+        assert fox_value == approx(0.389768, abs=0.0001)
 
     def test_get_set_params_compatibility(self):
         bm25 = BM25(tokenizer=lambda x: x.split())
