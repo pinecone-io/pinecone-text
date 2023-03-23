@@ -67,8 +67,16 @@ class BM25(BaseSparseEncoder):
         self.vocabulary_size: int = vocabulary_size
         self.b: float = b
         self.k1: float = k1
+        self.min_tf: int = min_tf
 
-        self._tokenizer: Callable[[str], List[str]] = tokenizer
+        self._tokenizer = BM25Tokenizer(
+            lower_case=lower_case,
+            remove_en_stop_words=remove_en_stop_words,
+            remove_punctuation=remove_punctuation,
+            remove_single_chars=remove_single_chars,
+            stem=stem,
+            stemmer_language=stemmer_language,
+        )
         self._doc_freq_vectorizer = HashingVectorizer(
             n_features=self.vocabulary_size,
             token_pattern=None,
@@ -92,15 +100,6 @@ class BM25(BaseSparseEncoder):
         self.n_docs: Optional[int] = None
         self.avgdl: Optional[float] = None
 
-    def _norm_token(self,
-                    token,
-                    lower_case: bool,
-                    remove_stop_words: bool,
-                    remove_punctuation: bool,
-                    remove_single_chars: bool,
-                    stem: bool) -> Callable[[str], List[str]]:
-        pass
-
     def fit(self, corpus: List[str]) -> "BM25":
         """
         Fit BM25 by calculating document frequency over the corpus
@@ -116,6 +115,7 @@ class BM25(BaseSparseEncoder):
         self.doc_freq = {
             int(idx): float(val)
             for idx, val in zip(doc_tf_vector.indices, doc_tf_vector.data)
+            if val >= self.min_tf
         }
         return self
 
@@ -274,17 +274,18 @@ class BM25(BaseSparseEncoder):
 
 
 class BM25Tokenizer:
+    PUNCTUATION_SYMBOLS = '!"#$%&()*+-./:;<=>?@[\]^_`{|}~\n'
 
-    PUNCTUATION_SYMBOLS = "!\"#$%&()*+-./:;<=>?@[\]^_`{|}~\n"
-
-    def __init__(self,
-                 tokenizer: Optional[Callable[[str], List[str]]] = None,
-                 lower_case: bool = True,
-                 remove_en_stop_words: bool = True,
-                 remove_punctuation: bool = True,
-                 remove_single_chars: bool = True,
-                 stem: bool  = True,
-                 stemmer_language: str = "english"):
+    def __init__(
+        self,
+        tokenizer: Optional[Callable[[str], List[str]]] = None,
+        lower_case: bool = True,
+        remove_en_stop_words: bool = True,
+        remove_punctuation: bool = True,
+        remove_single_chars: bool = True,
+        stem: bool = True,
+        stemmer_language: str = "english",
+    ):
         self._tokenizer = tokenizer
         self._lower_case = lower_case
         self._remove_en_stop_words = remove_en_stop_words
@@ -301,9 +302,13 @@ class BM25Tokenizer:
         if self._lower_case:
             tokens = [token.lower() for token in tokens]
         if self._remove_punctuation:
-            tokens = [re.sub(f"[{self.PUNCTUATION_SYMBOLS}]", "", token) for token in tokens]
+            tokens = [
+                re.sub(f"[{self.PUNCTUATION_SYMBOLS}]", "", token) for token in tokens
+            ]
         if self._remove_en_stop_words:
-            tokens = [token for token in tokens if token not in ENGLISH_STOP_WORDS]
+            tokens = [
+                token for token in tokens if token.lower() not in ENGLISH_STOP_WORDS
+            ]
         if self._stem:
             tokens = [self._stemmer.stem(token) for token in tokens]
         if self._remove_single_chars:
