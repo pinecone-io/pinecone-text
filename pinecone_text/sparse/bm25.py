@@ -22,7 +22,7 @@ class BM25(BaseSparseEncoder):
     def __init__(
         self,
         tokenizer: Optional[Callable[[str], List[str]]] = None,
-        vocabulary_size: int = 2**18,
+        vocabulary_size: int = 2**26,
         b: float = 0.75,
         k1: float = 1.2,
         min_tf: int = 2,
@@ -77,14 +77,6 @@ class BM25(BaseSparseEncoder):
             stem=stem,
             stemmer_language=stemmer_language,
         )
-        self._doc_freq_vectorizer = HashingVectorizer(
-            n_features=self.vocabulary_size,
-            token_pattern=None,
-            tokenizer=self._tokenizer,
-            norm=None,
-            alternate_sign=False,
-            binary=True,
-        )
 
         self._tf_vectorizer = HashingVectorizer(
             n_features=self.vocabulary_size,
@@ -107,11 +99,13 @@ class BM25(BaseSparseEncoder):
         Args:
             corpus: list of texts to fit BM25 with
         """
-        doc_tf_matrix = self._doc_freq_vectorizer.transform(corpus)
         tf_matrix = self._tf_vectorizer.transform(corpus)
         self.avgdl = tf_matrix.sum(axis=1).mean()
-        self.n_docs = doc_tf_matrix.shape[0]
-        doc_tf_vector = sparse.csr_matrix(doc_tf_matrix.sum(axis=0))
+        self.n_docs = tf_matrix.shape[0]
+
+        # make tf matrix binary (1 if term is present in doc, 0 otherwise)
+        tf_matrix.data.fill(1)
+        doc_tf_vector = sparse.csr_matrix(tf_matrix.sum(axis=0))
         self.doc_freq = {
             int(idx): float(val)
             for idx, val in zip(doc_tf_vector.indices, doc_tf_vector.data)
@@ -166,7 +160,7 @@ class BM25(BaseSparseEncoder):
             raise ValueError("texts must be a string or list of strings")
 
     def _encode_single_query(self, text: str) -> SparseVector:
-        query_tf = self._doc_freq_vectorizer.transform([text])
+        query_tf = self._tf_vectorizer.transform([text])
         indices, values = self._norm_query_tf(query_tf)
         return {
             "indices": [int(x) for x in indices],

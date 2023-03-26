@@ -15,8 +15,8 @@ class TestBM25:
             "The lazy dog is brown",
             "The fox is brown",
             "The fox is quick",
-            "The fox is brown and quick",
-            "The fox is brown and lazy",
+            "The fox is brown and quick and brown",
+            "The fox is brown and lazy and lazy and lazy",
             "The fox is brown and quick and lazy",
             "The fox is brown and quick and lazy and jumps",
             "The fox is brown and quick and lazy and jumps and over",
@@ -30,7 +30,7 @@ class TestBM25:
             os.remove(self.PARAMS_PATH)
 
     def get_token_hash(self, token, bm25: BM25):
-        indices = bm25._doc_freq_vectorizer.transform([token]).indices
+        indices = bm25._tf_vectorizer.transform([token]).indices
         return indices[0] if len(indices) > 0 else None
 
     def test_fit_default_params(self):
@@ -107,7 +107,7 @@ class TestBM25:
             encoded_doc["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
-        assert fox_value == approx(0.33132, abs=0.0001)
+        assert fox_value == approx(0.34782, abs=0.0001)
 
     def test_encode_documents(self):
         docs = [
@@ -130,7 +130,7 @@ class TestBM25:
             encoded_docs[0]["indices"].index(self.get_token_hash("fox", self.bm25))
         ]
 
-        assert fox_value == approx(0.331325, abs=0.0001)
+        assert fox_value == approx(0.347826, abs=0.0001)
 
     def test_get_set_params_compatibility(self):
         bm25 = BM25(tokenizer=lambda x: x.split())
