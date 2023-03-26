@@ -19,7 +19,7 @@ class TestBM25:
             "The fox is brown and lazy and lazy and lazy",
             "The fox is brown and quick and lazy",
             "The fox is brown and quick and lazy and jumps",
-            "The fox is brown and quick and lazy and jumps and over",
+            "The fox is brown and quick and lazy and jumps and over neword",
         ]
         self.bm25 = BM25(tokenizer=lambda x: x.split())
         self.bm25.fit(self.corpus)
@@ -43,6 +43,10 @@ class TestBM25:
         assert self.get_token_hash("the", self.bm25) is None
         assert self.bm25.doc_freq[self.get_token_hash("quick", self.bm25)] == 6
         assert self.get_token_hash("notincorpus", self.bm25) not in self.bm25.doc_freq
+
+        # validate min_tf param
+        assert self.get_token_hash("newword", self.bm25) not in self.bm25.doc_freq
+        assert self.get_token_hash("jumps", self.bm25) in self.bm25.doc_freq
 
     def test_encode_query(self):
         query = "The quick brown fox jumps over the lazy dog newword"
