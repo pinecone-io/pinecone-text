@@ -25,7 +25,7 @@ class BM25(BaseSparseEncoder):
         vocabulary_size: int = 2**26,
         b: float = 0.75,
         k1: float = 1.2,
-        min_tf: int = 2,
+        min_tf: int = 1,
         lower_case: bool = True,
         remove_en_stop_words: bool = True,
         remove_punctuation: bool = True,
