@@ -41,6 +41,16 @@ class BM25(BaseSparseEncoder):
             vocabulary_size: The hash size to which the tokens are mapped to
             b: The length normalization parameter
             k1: The term frequency normalization parameter
+            min_tf: The minimum number of times a token must appear in the corpus to be considered (binary per document)
+            lower_case: Whether to convert all characters to lowercase before tokenizing
+            remove_en_stop_words: Whether to remove English stop words
+            remove_punctuation: Whether to remove punctuation characters from tokens
+            remove_single_chars: Whether to remove single characters from tokens
+            stem: Whether to stem tokens
+            stemmer_language: The language to use for stemming
+
+        Note: Tokenization and normalization is done internally using the BM25Tokenizer class.
+              To test the tokenization process, use the BM25Tokenizer class directly.
 
         Example:
 
@@ -70,6 +80,7 @@ class BM25(BaseSparseEncoder):
         self.min_tf: int = min_tf
 
         self._tokenizer = BM25Tokenizer(
+            tokenizer=tokenizer,
             lower_case=lower_case,
             remove_en_stop_words=remove_en_stop_words,
             remove_punctuation=remove_punctuation,
