@@ -28,7 +28,7 @@ class TestBM25:
             os.remove(self.PARAMS_PATH)
 
     def get_token_hash(self, token, bm25: BM25):
-        return bm25._doc_freq_vectorizer.transform([token]).indices[0].item()
+        return bm25._tf_vectorizer.transform([token]).indices[0].item()
 
     def test_fit_default_params(self):
         assert self.bm25.n_docs == len(self.corpus)
