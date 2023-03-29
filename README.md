@@ -1,6 +1,8 @@
 # Pinecone text client
 
-Text utilities to work with Pinecone.
+:warning: This library is under heavy development and is subject to change.
+
+This library provides tools for encoding text data for Pinecone. It includes: encoding text to sparse vectors using BM25 or Splade, and encoding text to dense vectors using Sentence Transformers. 
 
 ## Sparse encoding
 
