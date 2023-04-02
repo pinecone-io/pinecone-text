@@ -1,15 +1,16 @@
 import json
+import mmh3
 import numpy as np
 import tempfile
 from pathlib import Path
 
 import wget
-from scipy import sparse
-from typing import List, Callable, Optional, Dict, Union, Tuple, Any
-from sklearn.feature_extraction.text import HashingVectorizer
+from typing import List, Optional, Dict, Union, Tuple
+from collections import Counter
 
 from pinecone_text.sparse import SparseVector
 from pinecone_text.sparse.base_sparse_encoder import BaseSparseEncoder
+from pinecone_text.sparse.bm25_tokenizer import BM25Tokenizer
 
 
 class BM25(BaseSparseEncoder):
@@ -18,58 +19,49 @@ class BM25(BaseSparseEncoder):
 
     def __init__(
         self,
-        tokenizer: Callable[[str], List[str]],
-        vocabulary_size: int = 2**24,
         b: float = 0.75,
         k1: float = 1.2,
+        lower_case: bool = True,
+        remove_punctuation: bool = True,
+        remove_stopwords: bool = True,
+        stem: bool = True,
+        language: str = "english",
     ):
         """
         OKapi BM25 with HashingVectorizer
 
         Args:
-            tokenizer: A function to converts text to a list of tokens
-            vocabulary_size: The hash size to which the tokens are mapped to
             b: The length normalization parameter
             k1: The term frequency normalization parameter
+            lower_case: Whether to lower case the text
+            remove_punctuation: Whether to remove punctuation
+            remove_stopwords: Whether to remove stopwords
+            stem: Whether to stem the text
+            language: The language of the text (used for stopwords and stemmer)
 
         Example:
 
             ```python
             from pinecone_text.sparse import BM25
 
-            bm25 = BM25(tokenizer=lambda x: x.split())
+            >>> bm25 = BM25()
 
-            bm25.fit([
-                "The quick brown fox jumps over the lazy dog",
-                "The lazy dog is brown",
-                "The fox is brown"])
+            >>> bm25.fit([ "The quick brown fox jumps over the lazy dog", "The lazy dog is brown"])
 
-            bm25.encode_documents("The brown fox is quick") # {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
-            bm25.encode_queries("Which fox is brown?") # # {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
+            >>> bm25.encode_documents("The brown fox is quick") # {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
+            >>> bm25.encode_queries("Which fox is brown?") # # {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
             ```
         """
-        if vocabulary_size > 2**28 - 1:
-            raise ValueError(
-                "currently only supports vocabulary_size <= 2**28 - 1,"
-                "upcoming versions will support vocabulary_size <= 2**32 - 1"
-            )
-        elif vocabulary_size <= 0:
-            raise ValueError("vocabulary_size must be greater than 0")
-
         # Fixed params
-        self.vocabulary_size: int = vocabulary_size
         self.b: float = b
         self.k1: float = k1
 
-        self._tokenizer: Callable[[str], List[str]] = tokenizer
-
-        self._tf_vectorizer = HashingVectorizer(
-            n_features=self.vocabulary_size,
-            token_pattern=None,
-            tokenizer=self._tokenizer,
-            norm=None,
-            alternate_sign=False,
-            binary=False,
+        self._tokenizer = BM25Tokenizer(
+            lower_case=lower_case,
+            remove_punctuation=remove_punctuation,
+            remove_stopwords=remove_stopwords,
+            stem=stem,
+            language=language,
         )
 
         # Learned Params
@@ -84,17 +76,26 @@ class BM25(BaseSparseEncoder):
         Args:
             corpus: list of texts to fit BM25 with
         """
-        tf_matrix = self._tf_vectorizer.transform(corpus)
-        self.avgdl = tf_matrix.sum(axis=1).mean()
-        self.n_docs = tf_matrix.shape[0]
+        n_docs = 0
+        sum_doc_len = 0
+        doc_freq_counter: Counter = Counter()
 
-        # make tf matrix binary (1 if term is present in doc, 0 otherwise)
-        tf_matrix.data.fill(1)
-        doc_tf_vector = sparse.csr_matrix(tf_matrix.sum(axis=0))
-        self.doc_freq = {
-            int(idx): float(val)
-            for idx, val in zip(doc_tf_vector.indices, doc_tf_vector.data)
-        }
+        for doc in corpus:
+            if not isinstance(doc, str):
+                raise ValueError("corpus must be a list of strings")
+
+            indices, tf = self._tf(doc)
+            if len(indices) == 0:
+                continue
+            n_docs += 1
+            sum_doc_len += sum(tf)
+
+            # Count the number of documents that contain each token
+            doc_freq_counter.update(indices)
+
+        self.doc_freq = dict(doc_freq_counter)
+        self.n_docs = n_docs
+        self.avgdl = sum_doc_len / n_docs
         return self
 
     def encode_documents(
@@ -117,11 +118,16 @@ class BM25(BaseSparseEncoder):
             raise ValueError("texts must be a string or list of strings")
 
     def _encode_single_document(self, text: str) -> SparseVector:
-        doc_tf = self._tf_vectorizer.transform([text])
-        norm_doc_tf = self._norm_doc_tf(doc_tf)
+        indices, doc_tf = self._tf(text)
+        tf = np.array(doc_tf)
+        tf_sum = sum(tf)
+
+        tf_normed = tf / (
+            self.k1 * (1.0 - self.b + self.b * (tf_sum / self.avgdl)) + tf
+        )
         return {
-            "indices": [int(x) for x in doc_tf.indices],
-            "values": [float(x) for x in norm_doc_tf.tolist()],
+            "indices": indices,
+            "values": tf_normed.tolist(),
         }
 
     def encode_queries(
@@ -144,11 +150,14 @@ class BM25(BaseSparseEncoder):
             raise ValueError("texts must be a string or list of strings")
 
     def _encode_single_query(self, text: str) -> SparseVector:
-        query_tf = self._tf_vectorizer.transform([text])
-        indices, values = self._norm_query_tf(query_tf)
+        indices, query_tf = self._tf(text)
+
+        tf = np.array([self.doc_freq.get(idx, 1) for idx in indices])  # type: ignore
+        idf = np.log((self.n_docs + 1) / (tf + 0.5))  # type: ignore
+        idf_norm = idf / idf.sum()
         return {
-            "indices": [int(x) for x in indices],
-            "values": [float(x) for x in values],
+            "indices": indices,
+            "values": idf_norm.tolist(),
         }
 
     def dump(self, path: str) -> None:
@@ -174,7 +183,7 @@ class BM25(BaseSparseEncoder):
 
     def get_params(
         self,
-    ) -> Dict[str, Union[int, float, Dict[str, List[Union[int, float]]]]]:
+    ) -> Dict[str, Union[int, float, str, Dict[str, List[Union[int, float]]]]]:
         """Returns the BM25 params"""
 
         if self.doc_freq is None or self.n_docs is None or self.avgdl is None:
@@ -190,17 +199,25 @@ class BM25(BaseSparseEncoder):
             },
             "b": self.b,
             "k1": self.k1,
-            "vocabulary_size": self.vocabulary_size,
+            "lower_case": self._tokenizer.lower_case,
+            "remove_punctuation": self._tokenizer.remove_punctuation,
+            "remove_stopwords": self._tokenizer.remove_stopwords,
+            "stem": self._tokenizer.stem,
+            "language": self._tokenizer.language,
         }
 
     def set_params(
         self,
         avgdl: float,
         n_docs: int,
-        vocabulary_size: int,
         doc_freq: Dict[str, List[int]],
         b: float,
         k1: float,
+        lower_case: bool,
+        remove_punctuation: bool,
+        remove_stopwords: bool,
+        stem: bool,
+        language: str,
     ) -> "BM25":
         """
         Set input parameters to BM25
@@ -208,10 +225,14 @@ class BM25(BaseSparseEncoder):
         Args:
             avgdl: average document length in the corpus
             n_docs: number of documents in the corpus
-            vocabulary_size: size of the vocabulary
             doc_freq: document frequency of each term in the corpus
             b: length normalization parameter
             k1: term frequency normalization parameter
+            lower_case: whether to lower case the text
+            remove_punctuation: whether to remove punctuation from the text
+            remove_stopwords: whether to remove stopwords from the text
+            stem: whether to stem the text
+            language: language of the text for stopwords and stemmer
         """
         self.avgdl = avgdl  # type: ignore
         self.n_docs = n_docs  # type: ignore
@@ -221,31 +242,43 @@ class BM25(BaseSparseEncoder):
         }
         self.b = b  # type: ignore
         self.k1 = k1  # type: ignore
-        self.vocabulary_size = vocabulary_size  # type: ignore
+        self._tokenizer = BM25Tokenizer(
+            lower_case=lower_case,  # type: ignore
+            remove_punctuation=remove_punctuation,  # type: ignore
+            remove_stopwords=remove_stopwords,  # type: ignore
+            stem=stem,  # type: ignore
+            language=language,
+        )  # type: ignore
         return self
-
-    def _norm_doc_tf(self, doc_tf: sparse.csr_matrix) -> np.ndarray:
-        """Calculate BM25 normalized document term-frequencies"""
-        b, k1, avgdl = self.b, self.k1, self.avgdl
-        tf = doc_tf.data
-        norm_tf = tf / (k1 * (1.0 - b + b * (tf.sum() / avgdl)) + tf)
-        return norm_tf
-
-    def _norm_query_tf(
-        self, query_tf: sparse.csr_matrix
-    ) -> Tuple[np.ndarray, np.ndarray]:
-        """Calculate BM25 normalized query term-frequencies"""
-        tf = np.array([self.doc_freq.get(idx, 0) for idx in query_tf.indices])  # type: ignore
-        idf = np.log((self.n_docs + 1) / (tf + 0.5))  # type: ignore
-        return query_tf.indices, idf / idf.sum()
 
     @staticmethod
     def default() -> "BM25":
         """Create a BM25 model from pre-made params for the MS MARCO passages corpus"""
-        bm25 = BM25(lambda x: x.split())
+        bm25 = BM25()
         url = "https://storage.googleapis.com/pinecone-datasets-dev/bm25_params/msmarco_bm25_params.json"
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_path = Path(tmp_dir, "msmarco_bm25_params.json")
             wget.download(url, str(tmp_path))
             bm25.load(str(tmp_path))
         return bm25
+
+    @staticmethod
+    def _hash_text(token: str) -> int:
+        """Use mmh3 to hash text to 32-bit unsigned integer"""
+        return mmh3.hash(token, signed=False)
+
+    def _tf(self, text: str) -> Tuple[List[int], List[int]]:
+        """
+        Calculate term frequency for a given text
+
+        Args:
+            text: a document to calculate term frequency for
+
+        Returns: a tuple of two lists:
+            indices: list of term indices
+            values: list of term frequencies
+        """
+        counts = Counter((self._hash_text(token) for token in self._tokenizer(text)))
+
+        items = list(counts.items())
+        return [idx for idx, _ in items], [val for _, val in items]
