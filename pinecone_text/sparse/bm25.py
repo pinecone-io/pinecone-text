@@ -3,7 +3,7 @@ import mmh3
 import numpy as np
 import tempfile
 from pathlib import Path
-
+from tqdm.autonotebook import tqdm
 import wget
 from typing import List, Optional, Dict, Union, Tuple
 from collections import Counter
@@ -80,7 +80,7 @@ class BM25(BaseSparseEncoder):
         sum_doc_len = 0
         doc_freq_counter: Counter = Counter()
 
-        for doc in corpus:
+        for doc in tqdm(corpus):
             if not isinstance(doc, str):
                 raise ValueError("corpus must be a list of strings")
 

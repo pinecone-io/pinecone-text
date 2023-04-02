@@ -1,8 +1,19 @@
 import string
+import nltk
 from typing import List
 
 from nltk import word_tokenize, SnowballStemmer
 from nltk.corpus import stopwords
+
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
+
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('corpora/stopwords')
 
 
 class BM25Tokenizer:

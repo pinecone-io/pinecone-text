@@ -125,6 +125,26 @@ class TestBM25:
 
         assert fox_value == approx(0.347826, abs=0.0001)
 
+    def test_tf(self):
+        doc = "The quick brown fox jumps jumps jumps over the lazy dog newword newword"
+        indices, tf = self.bm25._tf(doc)
+
+        assert len(indices) == len(tf)
+        assert len(indices) == 7
+        assert tf[indices.index(BM25._hash_text("fox"))] == 1
+        assert tf[indices.index(BM25._hash_text("newword"))] == 2
+        assert tf[indices.index(BM25._hash_text("jump"))] == 3
+        assert BM25._hash_text("jumps") not in indices
+        assert BM25._hash_text("the") not in indices
+
+    def test_tf_zero_tokens(self):
+        indices, tf = self.bm25._tf("")
+        assert indices == [] and tf == []
+
+        doc = "The over is #"
+        indices, tf = self.bm25._tf(doc)
+        assert indices == [] and tf == []
+
     def test_get_set_params_compatibility(self):
         bm25 = BM25()
         bm25.set_params(**self.bm25.get_params())
