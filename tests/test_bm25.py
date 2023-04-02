@@ -182,6 +182,16 @@ class TestBM25:
         with raises(ValueError):
             self.bm25.encode_queries(1)
 
+    def test_fit_with_empty_documents(self):
+        bm25 = BM25()
+        bm25.fit(self.corpus + ["", "the I %"])
+        assert bm25.get_params() == self.bm25.get_params()
+
+    def test_fit_with_invalid_documents(self):
+        bm25 = BM25()
+        with raises(ValueError):
+            bm25.fit(self.corpus + [1, 2])
+
     def test_create_default(self):
         bm25 = BM25.default()
         assert bm25.get_params()["n_docs"] == 8841823

@@ -255,7 +255,7 @@ class BM25(BaseSparseEncoder):
     def default() -> "BM25":
         """Create a BM25 model from pre-made params for the MS MARCO passages corpus"""
         bm25 = BM25()
-        url = "https://storage.googleapis.com/pinecone-datasets-dev/bm25_params/msmarco_bm25_params.json"
+        url = "https://storage.googleapis.com/pinecone-datasets-dev/bm25_params/msmarco_bm25_params_v4_0_0.json"
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_path = Path(tmp_dir, "msmarco_bm25_params.json")
             wget.download(url, str(tmp_path))

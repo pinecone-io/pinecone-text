@@ -6,14 +6,14 @@ from nltk import word_tokenize, SnowballStemmer
 from nltk.corpus import stopwords
 
 try:
-    nltk.data.find('tokenizers/punkt')
+    nltk.data.find("tokenizers/punkt")
 except LookupError:
-    nltk.download('punkt')
+    nltk.download("punkt")
 
 try:
-    nltk.data.find('corpora/stopwords')
+    nltk.data.find("corpora/stopwords")
 except LookupError:
-    nltk.download('corpora/stopwords')
+    nltk.download("stopwords")
 
 
 class BM25Tokenizer:

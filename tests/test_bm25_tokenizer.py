@@ -1,3 +1,9 @@
+import pytest
+
+import nltk
+import shutil
+import importlib
+import sys
 from pinecone_text.sparse.bm25_tokenizer import BM25Tokenizer
 
 
@@ -101,4 +107,59 @@ class TestBM25Tokenizer:
             "par-dessus",
             "chien",
             "paress",
+        ]
+
+        tokenizer = BM25Tokenizer(
+            lower_case=False,
+            stem=False,
+            remove_punctuation=True,
+            remove_stopwords=True,
+            language="english",
+        )
+
+        assert tokenizer("The Stop words I") == ["Stop", "words"]
+
+    def test_bm25_invalid_params(self):
+        with pytest.raises(ValueError):
+            BM25Tokenizer(
+                lower_case=True,
+                stem=True,
+                remove_punctuation=True,
+                remove_stopwords=True,
+                language="invalid",
+            )
+
+        with pytest.raises(ValueError):
+            BM25Tokenizer(
+                lower_case=False,
+                stem=True,
+                remove_punctuation=True,
+                remove_stopwords=True,
+                language="english",
+            )
+
+    def test_nltk_download(self):
+        shutil.rmtree(nltk.find("tokenizers"))
+        shutil.rmtree(nltk.find("corpora"))
+
+        importlib.reload(sys.modules["pinecone_text.sparse.bm25_tokenizer"])
+
+        tokenizer = BM25Tokenizer(
+            lower_case=True,
+            stem=True,
+            remove_punctuation=True,
+            remove_stopwords=True,
+            language="english",
+        )
+
+        nltk.find("tokenizers/punkt")
+        nltk.find("corpora/stopwords")
+
+        assert tokenizer("The quick brown fox jumps over the lazy dog") == [
+            "quick",
+            "brown",
+            "fox",
+            "jump",
+            "lazi",
+            "dog",
         ]
