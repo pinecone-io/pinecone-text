@@ -32,6 +32,7 @@ class BM25Tokenizer:
         self.language = language
         self._stemmer = SnowballStemmer(language)
         self._stop_words = set(stopwords.words(language))
+        self._punctuation = set(string.punctuation)
 
         if self.stem and not self.lower_case:
             raise ValueError(
@@ -43,7 +44,7 @@ class BM25Tokenizer:
         if self.lower_case:
             tokens = [word.lower() for word in tokens]
         if self.remove_punctuation:
-            tokens = [word for word in tokens if word not in string.punctuation]
+            tokens = [word for word in tokens if word not in self._punctuation]
         if self.remove_stopwords:
             if self.lower_case:
                 tokens = [word for word in tokens if word not in self._stop_words]
