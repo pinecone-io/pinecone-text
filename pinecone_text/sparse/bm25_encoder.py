@@ -3,7 +3,7 @@ import mmh3
 import numpy as np
 import tempfile
 from pathlib import Path
-from tqdm.autonotebook import tqdm
+from tqdm.auto import tqdm
 import wget
 from typing import List, Optional, Dict, Union, Tuple
 from collections import Counter
