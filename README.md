@@ -10,14 +10,14 @@ For more information, see the [Pinecone documentation](https://docs.pinecone.io/
 ### BM25
 
 ```python
-from pinecone_text.sparse import BM25
+from pinecone_text.sparse import BM25Encoder
 
 corpus = ["The quick brown fox jumps over the lazy dog",
           "The lazy dog is brown",
           "The fox is brown"]
 
 # Initialize BM25 and fit the corpus
-bm25 = BM25(tokenizer=lambda x: x.split())
+bm25 = BM25Encoder()
 bm25.fit(corpus)
 
 # Encode a new document (for upsert to Pinecone index)
@@ -36,23 +36,23 @@ bm25.load("bm25_params.json")
 ```
 
 #### Load default parameters
-If you want to use the default parameters for BM25, you can call the `default` method.
+If you want to use the default parameters for BM25Encoder, you can call the `default` method.
 The default parameters were fitted on the [MS MARCO](https://microsoft.github.io/msmarco/)  passage ranking dataset.
 ```python
-bm25 = BM25.default()
+bm25 = BM25Encoder.default()
 ```
 
 ### Splade
 
 ```python
-from pinecone_text.sparse import SPLADE
+from pinecone_text.sparse import SpladeEncoder
 
 corpus = ["The quick brown fox jumps over the lazy dog",
           "The lazy dog is brown",
           "The fox is brown"]
 
 # Initialize Splade
-splade = SPLADE()
+splade = SpladeEncoder()
 
 # encode a batch of documents/queries
 sparse_vectors = splade(corpus)

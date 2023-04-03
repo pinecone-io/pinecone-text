@@ -13,7 +13,7 @@ from pinecone_text.sparse.base_sparse_encoder import BaseSparseEncoder
 from pinecone_text.sparse.bm25_tokenizer import BM25Tokenizer
 
 
-class BM25(BaseSparseEncoder):
+class BM25Encoder(BaseSparseEncoder):
 
     """OKAPI BM25 implementation for single fit to a corpus (no continuous corpus updates supported)"""
 
@@ -28,15 +28,15 @@ class BM25(BaseSparseEncoder):
         language: str = "english",
     ):
         """
-        OKapi BM25 with HashingVectorizer
+        OKapi BM25 with mmh3 hashing
 
         Args:
             b: The length normalization parameter
             k1: The term frequency normalization parameter
-            lower_case: Whether to lower case the text
-            remove_punctuation: Whether to remove punctuation
-            remove_stopwords: Whether to remove stopwords
-            stem: Whether to stem the text
+            lower_case: Whether to lower case the tokens
+            remove_punctuation: Whether to remove punctuation tokens
+            remove_stopwords: Whether to remove stopwords tokens
+            stem: Whether to stem the tokens (using SnowballStemmer)
             language: The language of the text (used for stopwords and stemmer)
 
         Example:
@@ -44,12 +44,12 @@ class BM25(BaseSparseEncoder):
             ```python
             from pinecone_text.sparse import BM25
 
-            >>> bm25 = BM25()
+            bm25 = BM25Encoder()
 
-            >>> bm25.fit([ "The quick brown fox jumps over the lazy dog", "The lazy dog is brown"])
+            bm25.fit([ "The quick brown fox jumps over the lazy dog", "The lazy dog is brown"])
 
-            >>> bm25.encode_documents("The brown fox is quick") # {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
-            >>> bm25.encode_queries("Which fox is brown?") # # {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
+            bm25.encode_documents("The brown fox is quick") # {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
+            bm25.encode_queries("Which fox is brown?") # # {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
             ```
         """
         # Fixed params
@@ -69,7 +69,7 @@ class BM25(BaseSparseEncoder):
         self.n_docs: Optional[int] = None
         self.avgdl: Optional[float] = None
 
-    def fit(self, corpus: List[str]) -> "BM25":
+    def fit(self, corpus: List[str]) -> "BM25Encoder":
         """
         Fit BM25 by calculating document frequency over the corpus
 
@@ -170,7 +170,7 @@ class BM25(BaseSparseEncoder):
         with open(path, "w") as f:
             json.dump(self.get_params(), f)
 
-    def load(self, path: str) -> "BM25":
+    def load(self, path: str) -> "BM25Encoder":
         """
         Load BM25 params from a file in JSON format
 
@@ -218,7 +218,7 @@ class BM25(BaseSparseEncoder):
         remove_stopwords: bool,
         stem: bool,
         language: str,
-    ) -> "BM25":
+    ) -> "BM25Encoder":
         """
         Set input parameters to BM25
 
@@ -252,9 +252,9 @@ class BM25(BaseSparseEncoder):
         return self
 
     @staticmethod
-    def default() -> "BM25":
+    def default() -> "BM25Encoder":
         """Create a BM25 model from pre-made params for the MS MARCO passages corpus"""
-        bm25 = BM25()
+        bm25 = BM25Encoder()
         url = "https://storage.googleapis.com/pinecone-datasets-dev/bm25_params/msmarco_bm25_params_v4_0_0.json"
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_path = Path(tmp_dir, "msmarco_bm25_params.json")
