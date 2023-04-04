@@ -86,16 +86,20 @@ For an end-to-end example, you can refer to our Quora dataset generation with SP
 ```python
 from pinecone_text.sparse import SpladeEncoder
 
-documents = ["The quick brown fox jumps over the lazy dog",
-             "The lazy dog is brown",
-             "The fox is brown"]
-
 # Initialize Splade
 splade = SpladeEncoder()
 
-# encode a batch of documents/queries
-sparse_vectors = splade(documents)
+# encode a batch of documents
+documents = ["The quick brown fox jumps over the lazy dog",
+             "The lazy dog is brown",
+             "The fox is brown"]
+document_vectors = splade.encode_documents(documents)
 # [{"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}, ...]
+
+# encode a query
+query = "Which fox is brown?"
+query_vectors = splade.encode_queries(query)
+# {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
 ```
 
 
@@ -113,4 +117,29 @@ encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
 
 encoder.encode_queries(["Who jumped over the lazy dog?"])
 # [[0.11, 0.43, 0.67, ...]]
+```
+
+
+## Combining Sparse and Dense Encodings for Hybrid Search
+To combine sparse and dense encodings for hybrid search, you can use the `hybrid_convex_scale` method on your query.
+
+This method receives both a dense vector and a sparse vector, along with a convex scaling parameter `alpha`. It returns a tuple consisting of the scaled dense and sparse vectors according to the following formula: `alpha * dense_vector + (1 - alpha) * sparse_vector`.
+```python
+from pinecone_text.hybrid import hybrid_convex_scale
+from pinecone_text.sparse import SpladeEncoder
+from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
+
+# Initialize Splade
+splade = SpladeEncoder()
+
+# Initialize Sentence Transformer
+sentence_transformer = SentenceTransformerEncoder("sentence-transformers/all-MiniLM-L6-v2")
+
+# encode a query
+sparse_vector = splade.encode_queries("Which fox is brown?")
+dense_vector = sentence_transformer.encode_queries("Which fox is brown?")
+
+# combine sparse and dense vectors
+hybrid_dense, hybrid_sparse = hybrid_convex_scale(dense_vector, sparse_vector, alpha=0.8)
+# ([-0.21, 0.38, 0.15, ...], {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]})
 ```
