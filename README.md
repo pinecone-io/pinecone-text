@@ -1,6 +1,22 @@
-# Pinecone text client
+<h1 align="center">
+  <img src="https://avatars.githubusercontent.com/u/54333248?s=200&v=4">
+    <br>
+    Pinecone Text Client
+    <br>
+</h1>
 
-Text utilities to work with Pinecone.
+A Python text utilities client designed for use with Pinecone. This package streamlines text processing and encoding, enabling seamless integration with Pinecone's hybrid search.
+
+> **_⚠️ Warning_**
+>
+> This is a **public preview** ("Beta") version.   
+> For any issues or requests, please reach out to our [support](support@pinecone.io) team.
+
+## Installation
+
+```bash
+pip install -U pinecone-text
+```
 
 ## Sparse encoding
 
@@ -8,6 +24,14 @@ To convert your own text corpus to sparse vectors, you can either use BM25 or Sp
 For more information, see the [Pinecone documentation](https://docs.pinecone.io/docs/hybrid-search).
 
 ### BM25
+To encode your documents and queries using BM25 as vector for dot product search, you can use the `BM25Encoder` class.
+
+> **_📝 NOTE:_**
+> 
+> Our current implementation of BM25 supports only static document frequency (meaning that the document frequency values are precomputed and fixed, and do not change dynamically based on new documents added to the collection).
+>
+
+#### Usage
 
 ```python
 from pinecone_text.sparse import BM25Encoder
