@@ -6,7 +6,7 @@ from pinecone_text.sparse import SparseVector
 from pinecone_text.sparse.base_sparse_encoder import BaseSparseEncoder
 
 
-class SPLADE(BaseSparseEncoder):
+class SpladeEncoder(BaseSparseEncoder):
 
     """
     SPLADE sparse vector encoder.
