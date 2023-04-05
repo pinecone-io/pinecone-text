@@ -1529,4 +1529,4 @@ test = ["pytest (>=6.0.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8 <3.11"
-content-hash = "245f2957b3506b0786db548ad1acf2fe3952eab5bc1b9b88a0bd06bdb7d07ce0"
+content-hash = "437ded98f9ed37d31987eaa6eddd15b50ed4bc9550af0f488f4b15c9618f6990"
