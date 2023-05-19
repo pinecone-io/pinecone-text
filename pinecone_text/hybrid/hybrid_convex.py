@@ -13,7 +13,7 @@ def hybrid_convex_scale(
 
     Returns:
         a tuple of dense and sparse vectors scaled by alpha as a convex combination:
-        (dense * alpha) + (sparse * (1 - alpha))
+        ((dense * alpha), (sparse * (1 - alpha)))
     """
 
     if not 0 <= alpha <= 1:
