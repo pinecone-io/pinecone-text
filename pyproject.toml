@@ -4,11 +4,11 @@ version = "0.4.2"
 description = "Text utilities library by Pinecone.io"
 authors = ["Pinecone.io"]
 readme = "README.md"
-packages = [{include = "pinecone_text"}]
+packages = [{ include = "pinecone_text" }]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
-torch = "^1.13.1"
+torch = "^2.0"
 transformers = "^4.26.1"
 sentence-transformers = "^2.0.0"
 wget = "^3.2"
