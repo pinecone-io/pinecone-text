@@ -28,15 +28,8 @@ SparseVector = Dict[str, Union[List[int], List[float]]]
 
 from pinecone_text.sparse.bm25_encoder import BM25Encoder
 
-# Try to import the SpladeEncoder. If it fails, and user tries to init it, raise an error.
+# Try to import the SpladeEncoder. If it fails, let the usage of the encoder fail.
 try:
     from pinecone_text.sparse.splade_encoder import SpladeEncoder
-except ImportError:
-
-    class SpladeEncoder:
-        def __init__(self, *args, **kwargs):
-            raise ImportError(
-                "Cannot use SpladeEncoder because the 'splade' package is not installed. "
-                "Please install it with 'pip install pinecone-text[splade]'. "
-                "And then run 'from pinecone_text.sparse.splade_encoder import SpladeEncoder' again."
-            )
+except (ImportError, ModuleNotFoundError):
+    pass
