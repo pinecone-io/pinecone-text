@@ -4,7 +4,7 @@ try:
     import torch
 except (OSError, ImportError, ModuleNotFoundError) as e:
     raise ImportError(
-        """Failed to import torch. Make sure you install pytorch extra dependencies by running: `pip install pinecone-text[torch]`
+        """Failed to import torch. Make sure you install pytorch extra dependencies by running: `pip install pinecone-text[splade]`
 If this doesn't help, it is probably a CUDA error. If you do want to use GPU, please check your CUDA driver.
 If you want to use CPU only, run the following command:
 `pip uninstall -y torch torchvision;pip install -y torch torchvision --index-url https://download.pytorch.org/whl/cpu`"""
@@ -14,7 +14,7 @@ try:
     from transformers import AutoTokenizer, AutoModelForMaskedLM
 except (ImportError, ModuleNotFoundError) as e:
     raise ImportError(
-        "Failed to import transformers. Make sure you install pytorch extra dependencies by running: `pip install pinecone-text[torch]`"
+        "Failed to import transformers. Make sure you install splade extra dependencies by running: `pip install pinecone-text[splade]`"
     ) from e
 
 from pinecone_text.sparse import SparseVector
