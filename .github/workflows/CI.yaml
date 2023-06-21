@@ -26,7 +26,7 @@ jobs:
 
     - run: poetry install --with dev
 
-    - run: pip show torch
+    - run: poetry run pip show torch
 
     - run: poetry run black --check .
 
