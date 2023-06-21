@@ -4,14 +4,10 @@ try:
     import torch
 except (OSError, ImportError) as e:
     raise ImportError(
-        "Failed to import torch. Make sure you install pytorch extra dependencies by running:"
-        "pip install pinecone-text[torch] ."
-        "If this doesn't help, it is probably a CUDA error. "
-        "If you do want to use GPU, please check your CUDA driver. "
-        "If you want to use CPU only, run the following: "
-        "`pip uninstall -y torch torchvision; "
-        "pip install -y torch torchvision --index-url "
-        "https://download.pytorch.org/whl/cpu`"
+        """Failed to import torch. Make sure you install pytorch extra dependencies by running: `pip install pinecone-text[torch]`
+If this doesn't help, it is probably a CUDA error. If you do want to use GPU, please check your CUDA driver.
+If you want to use CPU only, run the following command:
+`pip uninstall -y torch torchvision;pip install -y torch torchvision --index-url https://download.pytorch.org/whl/cpu`"""
     ) from e
 
 
