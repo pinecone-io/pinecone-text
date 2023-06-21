@@ -31,7 +31,7 @@ from pinecone_text.sparse.bm25_encoder import BM25Encoder
 
 # Try to import the SpladeEncoder. If it fails, let the usage of the encoder fail.
 try:
-    from pinecone_text.sparse.splade_encoder import SpladeEncoder
+    from pinecone_text.sparse.splade_encoder import *
 except (ImportError, ModuleNotFoundError):
     logging.warning(
         "Failed to import splade encoder. If you want to use splade, install the splade extra dependencies by running: `pip install pinecone-text[splade]`"
