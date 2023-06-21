@@ -5,9 +5,10 @@ on: push
 jobs:
   run-tests:
     name: Run tests
-    runs-on: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [macos-latest, ubuntu-latest]
         python-version: [3.8, 3.9, '3.10', 3.11]
 
     steps:
