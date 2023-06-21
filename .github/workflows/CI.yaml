@@ -28,7 +28,7 @@ jobs:
 
     - run: poetry install --with dev --all-extras
 
-    - name: Install pytorch for CPU for ubuntu-latest
+    - name: Install pytorch CPU for ubuntu-latest
       run: poetry run pip uninstall -y torch torchvision; poetry run pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
       if: matrix.os == 'ubuntu-latest'
 

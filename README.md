@@ -17,7 +17,7 @@ To install the Pinecone Text Client, use the following command:
 pip install pinecone-text
 ```
 
-If you want to use SpladeEncoder, you will need to install with the `torch` extra:
+If you wish to use SpladeEncoder, you will need to install the `torch` extra:
 ```bash
 pip install pincone-text[torch]
 ```
