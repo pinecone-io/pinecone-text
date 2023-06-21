@@ -21,7 +21,7 @@ jobs:
         with:
           version: 1.3.2
 
-      - run: poetry install --with dev
+      - run: poetry install --with dev --all-extras
       # ADJUST THIS: build your documentation into docs/.
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
       - run: poetry run pdoc -d google -o docs/ --logo https://d33wubrfki0l68.cloudfront.net/682006698903a55560c796b901fdfe4446c6d27a/a00ee/images/pinecone-logo.svg --search -t pdoc_theme pinecone_text
