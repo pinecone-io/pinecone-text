@@ -20,7 +20,7 @@ jobs:
 
     - name: install nvidia cuda toolkit
       if: >
-        matrix.operating-system == 'ubuntu-latest'
+        matrix.os == 'ubuntu-latest'
       run: >
         sudo apt install nvidia-cuda-toolkit
 
