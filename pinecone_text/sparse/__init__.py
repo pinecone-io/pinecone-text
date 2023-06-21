@@ -37,5 +37,6 @@ except ImportError:
         def __init__(self, *args, **kwargs):
             raise ImportError(
                 "Cannot use SpladeEncoder because the 'splade' package is not installed. "
-                "Please install it with 'pip install pinecone-text[splade]'."
+                "Please install it with 'pip install pinecone-text[splade]'. "
+                "And then run 'from pinecone_text.sparse.splade_encoder import SpladeEncoder' again."
             )
