@@ -20,8 +20,8 @@ jobs:
     - name: install nvidia cuda toolkit
       if: >
         matrix.operating-system == 'ubuntu-latest'
-        run: >
-          sudo apt install nvidia-cuda-toolkit
+      run: >
+        sudo apt install nvidia-cuda-toolkit
 
     - name: Install Poetry
       uses: snok/install-poetry@v1
