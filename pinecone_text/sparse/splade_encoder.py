@@ -9,7 +9,7 @@ except (OSError, ImportError) as e:
         "If this doesn't help, it is probably a CUDA error. "
         "If you do want to use GPU, please check your CUDA driver. "
         "If you want to use CPU only, run the following: "
-        "`poetry run pip uninstall -y torch torchvision; "
+        "`pip uninstall -y torch torchvision; "
         "pip install -y torch torchvision --index-url "
         "https://download.pytorch.org/whl/cpu`"
     ) from e
