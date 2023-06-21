@@ -22,6 +22,7 @@ This allows a semantic search to be performed on the sparse vectors. The SPLADE 
 For more information, see the [SPLADE paper](https://arxiv.org/abs/2109.10086). The SPLADE encoder is currently only available for inference only.
 """
 
+import logging
 from typing import Union, Dict, List
 
 SparseVector = Dict[str, Union[List[int], List[float]]]
@@ -32,4 +33,6 @@ from pinecone_text.sparse.bm25_encoder import BM25Encoder
 try:
     from pinecone_text.sparse.splade_encoder import SpladeEncoder
 except (ImportError, ModuleNotFoundError):
-    pass
+    logging.warning(
+        "Failed to import splade encoder. If you want to use splade, install the splade extra dependencies by running: `pip install pinecone-text[splade]`"
+    )
