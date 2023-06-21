@@ -2,7 +2,7 @@ from typing import List, Union
 
 try:
     import torch
-except (OSError, ImportError) as e:
+except (OSError, ImportError, ModuleNotFoundError) as e:
     raise ImportError(
         """Failed to import torch. Make sure you install pytorch extra dependencies by running: `pip install pinecone-text[torch]`
 If this doesn't help, it is probably a CUDA error. If you do want to use GPU, please check your CUDA driver.
@@ -10,8 +10,13 @@ If you want to use CPU only, run the following command:
 `pip uninstall -y torch torchvision;pip install -y torch torchvision --index-url https://download.pytorch.org/whl/cpu`"""
     ) from e
 
+try:
+    from transformers import AutoTokenizer, AutoModelForMaskedLM
+except (ImportError, ModuleNotFoundError) as e:
+    raise ImportError(
+        "Failed to import transformers. Make sure you install pytorch extra dependencies by running: `pip install pinecone-text[torch]`"
+    ) from e
 
-from transformers import AutoTokenizer, AutoModelForMaskedLM
 from pinecone_text.sparse import SparseVector
 from pinecone_text.sparse.base_sparse_encoder import BaseSparseEncoder
 

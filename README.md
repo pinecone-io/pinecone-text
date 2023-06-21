@@ -22,7 +22,6 @@ If you wish to use SpladeEncoder, you will need to install the `torch` extra:
 pip install pincone-text[torch]
 ```
 
-
 ## Sparse Encoding
 
 To convert your own text corpus to sparse vectors, you can either use [BM25](https://www.pinecone.io/learn/semantic-search/#bm25) or [SPLADE](https://www.pinecone.io/learn/splade/).
