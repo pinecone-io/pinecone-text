@@ -14,8 +14,14 @@ The Pinecone Text Client is a Python package that provides text utilities design
 ## Installation
 To install the Pinecone Text Client, use the following command:
 ```bash
-pip install -U pinecone-text
+pip install pinecone-text
 ```
+
+If you want to use SpladeEncoder, you will need to install with the `torch` extra:
+```bash
+pip install pincone-text[torch]
+```
+
 
 ## Sparse Encoding
 
