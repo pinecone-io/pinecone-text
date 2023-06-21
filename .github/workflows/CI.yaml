@@ -26,7 +26,7 @@ jobs:
 
     - run: poetry install --with dev
 
-    - run: poetry run pip show torch
+    - run: poetry run pip uninstall torch torchvision; pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
     - run: poetry run black --check .
 
