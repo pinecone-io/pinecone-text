@@ -32,6 +32,7 @@ from pinecone_text.sparse.bm25_encoder import BM25Encoder
 try:
     from pinecone_text.sparse.splade_encoder import SpladeEncoder
 except ImportError:
+
     class SpladeEncoder:
         def __init__(self, *args, **kwargs):
             raise ImportError(
