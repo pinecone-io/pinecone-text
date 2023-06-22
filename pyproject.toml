@@ -17,6 +17,7 @@ nltk = "^3.6.5"
 
 [tool.poetry.extras]
 splade = ["torch", "transformers", "sentence-transformers"]
+dense = ["torch", "transformers", "sentence-transformers"]
 
 [tool.poetry.group.dev]
 optional = true

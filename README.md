@@ -22,6 +22,11 @@ If you wish to use SpladeEncoder, you will need to install the `splade` extra:
 pip install pincone-text[splade]
 ```
 
+If you wish to use SentenceTransformerEncoder dense encoder, you will need to install the `dense` extra:
+```bash
+pip install pincone-text[dense]
+```
+
 ## Sparse Encoding
 
 To convert your own text corpus to sparse vectors, you can either use [BM25](https://www.pinecone.io/learn/semantic-search/#bm25) or [SPLADE](https://www.pinecone.io/learn/splade/).
