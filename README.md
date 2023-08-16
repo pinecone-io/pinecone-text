@@ -19,12 +19,12 @@ pip install pinecone-text
 
 If you wish to use `SpladeEncoder`, you will need to install the `splade` extra:
 ```bash
-pip install pincone-text[splade]
+pip install pinecone-text[splade]
 ```
 
 If you wish to use `SentenceTransformerEncoder` dense encoder, you will need to install the `dense` extra:
 ```bash
-pip install pincone-text[dense]
+pip install pinecone-text[dense]
 ```
 
 ## Sparse Encoding
