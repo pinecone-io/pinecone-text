@@ -113,10 +113,17 @@ query_vectors = splade.encode_queries(query)
 ```
 
 
-## Dense Encoding with Sentence Transformers
+## Dense Encoding
 
-For dense embedding we also provide a thin wrapper over the Sentence Transformers models hosted on hugging face. [See full list of models](https://huggingface.co/sentence-transformers)
+For dense embedding we also provide a thin wrapper for the following models:
+1. All Sentence Transformers models hosted on huggingface [See full list of models](https://huggingface.co/sentence-transformers)
+2. All OpenAI API supported embedding models [See full list of models](https://platform.openai.com/docs/models/embeddings)
 
+### Sentence Transformers models
+
+When using `SentenceTransformerEncoder`, the models are downloaded from huggingface and run locally.
+
+#### Usage
 ```python
 from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
 
@@ -129,6 +136,22 @@ encoder.encode_queries(["Who jumped over the lazy dog?"])
 # [[0.11, 0.43, 0.67, ...]]
 ```
 
+### OpenAI models
+
+When using the `OpenAIEncoder`, you need to provide an API key for the OpenAI API, and store it in the `OPENAI_API_KEY` environment variable.
+
+#### Usage
+```python
+from pinecone_text.dense.openai_encoder import OpenAIEncoder
+
+encoder = OpenAIEncoder() # defaults to the recommended model - "text-embedding-ada-002"
+
+encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
+# [[0.21, 0.38, 0.15, ...]]
+
+encoder.encode_queries(["Who jumped over the lazy dog?"])
+# [[0.11, 0.43, 0.67, ...]]
+```
 
 ## Combining Sparse and Dense Encodings for Hybrid Search
 To combine sparse and dense encodings for hybrid search, you can use the `hybrid_convex_scale` method on your query.
