@@ -27,7 +27,7 @@ class OpenAIEncoder(BaseDenseEncoder):
         self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
         texts_input = texts if isinstance(texts, list) else [texts]
-        response = openai.Embedding.create(input=texts_input, model=self._model_name)
+        response = openai.Embedding.create(input=texts_input, model=self._model_name)  # type: ignore
         if isinstance(texts, str):
             return response["data"][0]["embedding"]
         return [result["embedding"] for result in response["data"]]
