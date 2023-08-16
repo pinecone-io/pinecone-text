@@ -1,9 +1,10 @@
-from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
+import pytest
+from pinecone_text.dense.openai_encoder import OpenAIEncoder
 
-DEFAULT_DIMENSION = 384
+DEFAULT_DIMENSION = 1536
 
 
-class TestSentenceTransformerEncoder:
+class TestOpenAIEncoder:
     def setup_method(self):
         self.corpus = [
             "The quick brown fox jumps over the lazy dog",
@@ -16,9 +17,15 @@ class TestSentenceTransformerEncoder:
             "The fox is brown and quick and lazy and jumps",
             "The fox is brown and quick and lazy and jumps and over",
         ]
-        self.encoder = SentenceTransformerEncoder(
-            "sentence-transformers/all-MiniLM-L6-v2"
-        )
+        self.encoder = OpenAIEncoder()
+
+    @staticmethod
+    def mocked_embedding_create(input, model):
+        return {"data": [{"embedding": [0.1] * DEFAULT_DIMENSION}] * len(input)}
+
+    @pytest.fixture(autouse=True)
+    def mock_openai_embedding(self, monkeypatch):
+        monkeypatch.setattr("openai.Embedding.create", self.mocked_embedding_create)
 
     def test_encode_documents(self):
         encoded_docs = self.encoder.encode_documents(self.corpus)
@@ -26,13 +33,13 @@ class TestSentenceTransformerEncoder:
         assert len(encoded_docs[0]) == DEFAULT_DIMENSION
 
     def test_encode_single_document(self):
-        encoded_doc = self.encoder.encode_documents(self.corpus[0])
-        assert len(encoded_doc) == DEFAULT_DIMENSION
+        endoced_doc = self.encoder.encode_documents(self.corpus[0])
+        assert len(endoced_doc) == DEFAULT_DIMENSION
 
     def test_encode_single_document_list(self):
-        encoded_docs = self.encoder.encode_documents([self.corpus[0]])
-        assert len(encoded_docs) == 1
-        assert len(encoded_docs[0]) == DEFAULT_DIMENSION
+        endoced_docs = self.encoder.encode_documents([self.corpus[0]])
+        assert len(endoced_docs) == 1
+        assert len(endoced_docs[0]) == DEFAULT_DIMENSION
 
     def test_encode_queries(self):
         encoded_queries = self.encoder.encode_queries(self.corpus)
@@ -41,17 +48,6 @@ class TestSentenceTransformerEncoder:
     def test_encode_single_query(self):
         encoded_query = self.encoder.encode_queries(self.corpus[0])
         assert len(encoded_query) == DEFAULT_DIMENSION
-
-    def test_separate_doc_query_encoders(self):
-        encoder = SentenceTransformerEncoder(
-            document_encoder_name="sentence-transformers/all-MiniLM-L6-v2",
-            query_encoder_name="sentence-transformers/msmarco-distilbert-base-tas-b",
-        )
-        doc_encoded = encoder.encode_documents(self.corpus[0])
-        assert len(doc_encoded) == DEFAULT_DIMENSION
-
-        query_encoded = encoder.encode_queries(self.corpus[0])
-        assert len(query_encoded) == 768
 
     def test_encode_single_queries_list(self):
         encoded_queries = self.encoder.encode_queries([self.corpus[0]])
