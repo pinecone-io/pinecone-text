@@ -23,9 +23,15 @@ class TestOpenAIEncoder:
     def mocked_embedding_create(input, model):
         return {"data": [{"embedding": [0.1] * DEFAULT_DIMENSION}] * len(input)}
 
+    @staticmethod
+    def mocked_embedding_create_error(input, model):
+        raise RuntimeError("Some unexpected error!")
+
     @pytest.fixture(autouse=True)
     def mock_openai_embedding(self, monkeypatch):
         monkeypatch.setattr("openai.Embedding.create", self.mocked_embedding_create)
+
+    # region: test document encoding
 
     def test_encode_documents(self):
         encoded_docs = self.encoder.encode_documents(self.corpus)
@@ -48,6 +54,18 @@ class TestOpenAIEncoder:
         ):
             self.encoder.encode_documents(1)
 
+    def test_encode_documents_with_error(self, monkeypatch):
+        monkeypatch.setattr(
+            "openai.Embedding.create", self.mocked_embedding_create_error
+        )
+
+        with pytest.raises(RuntimeError, match="Some unexpected error!"):
+            self.encoder.encode_documents(self.corpus)
+
+    # endregion
+
+    # region: test query encoding
+
     def test_encode_queries(self):
         encoded_queries = self.encoder.encode_queries(self.corpus)
         assert len(encoded_queries[0]) == DEFAULT_DIMENSION
@@ -68,13 +86,12 @@ class TestOpenAIEncoder:
         ):
             self.encoder.encode_queries(1)
 
-    def test_encode_documents_with_error(self, monkeypatch):
-        def mocked_embedding_create_error(input, model):
-            raise RuntimeError("Some unexpected error!")
+    def test_encode_queries_with_error(self, monkeypatch):
+        monkeypatch.setattr(
+            "openai.Embedding.create", self.mocked_embedding_create_error
+        )
 
-        # Override the mocked method with one that raises an error.
-        monkeypatch.setattr("openai.Embedding.create", mocked_embedding_create_error)
-
-        # Now check that calling the method raises the expected error.
         with pytest.raises(RuntimeError, match="Some unexpected error!"):
-            self.encoder.encode_documents(self.corpus)
+            self.encoder.encode_queries(self.corpus)
+
+    # endregion
