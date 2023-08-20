@@ -26,8 +26,18 @@ class OpenAIEncoder(BaseDenseEncoder):
     def _encode(
         self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
-        texts_input = texts if isinstance(texts, list) else [texts]
-        response = openai.Embedding.create(input=texts_input, model=self._model_name)  # type: ignore
+        if isinstance(texts, str):
+            texts_input = [texts]
+        elif isinstance(texts, list):
+            texts_input = texts
+        else:
+            raise ValueError(f"texts must be a string or list of strings, got: {type(texts)}")
+
+        try:
+            response = openai.Embedding.create(input=texts_input, model=self._model_name)  # type: ignore
+        except openai.error.OpenAIError as e:
+            # TODO: consider wrapping external provider errors
+            raise e
         if isinstance(texts, str):
             return response["data"][0]["embedding"]
         return [result["embedding"] for result in response["data"]]
