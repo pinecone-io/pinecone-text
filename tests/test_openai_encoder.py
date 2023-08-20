@@ -42,7 +42,10 @@ class TestOpenAIEncoder:
         assert len(endoced_docs[0]) == DEFAULT_DIMENSION
 
     def test_encode_documents_invalid_input(self):
-        with pytest.raises(ValueError, match="texts must be a string or list of strings, got: <class 'int'>"):
+        with pytest.raises(
+            ValueError,
+            match="texts must be a string or list of strings, got: <class 'int'>",
+        ):
             self.encoder.encode_documents(1)
 
     def test_encode_queries(self):
@@ -59,5 +62,8 @@ class TestOpenAIEncoder:
         assert len(encoded_queries[0]) == DEFAULT_DIMENSION
 
     def test_encode_queries_invalid_input(self):
-        with pytest.raises(ValueError, match="texts must be a string or list of strings, got: <class 'int'>"):
+        with pytest.raises(
+            ValueError,
+            match="texts must be a string or list of strings, got: <class 'int'>",
+        ):
             self.encoder.encode_queries(1)

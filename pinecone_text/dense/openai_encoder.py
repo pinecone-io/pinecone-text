@@ -31,7 +31,9 @@ class OpenAIEncoder(BaseDenseEncoder):
         elif isinstance(texts, list):
             texts_input = texts
         else:
-            raise ValueError(f"texts must be a string or list of strings, got: {type(texts)}")
+            raise ValueError(
+                f"texts must be a string or list of strings, got: {type(texts)}"
+            )
 
         try:
             response = openai.Embedding.create(input=texts_input, model=self._model_name)  # type: ignore
