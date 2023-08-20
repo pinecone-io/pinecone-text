@@ -67,3 +67,14 @@ class TestOpenAIEncoder:
             match="texts must be a string or list of strings, got: <class 'int'>",
         ):
             self.encoder.encode_queries(1)
+
+    def test_encode_documents_with_error(self, monkeypatch):
+        def mocked_embedding_create_error(input, model):
+            raise RuntimeError("Some unexpected error!")
+
+        # Override the mocked method with one that raises an error.
+        monkeypatch.setattr("openai.Embedding.create", mocked_embedding_create_error)
+
+        # Now check that calling the method raises the expected error.
+        with pytest.raises(RuntimeError, match="Some unexpected error!"):
+            self.encoder.encode_documents(self.corpus)
