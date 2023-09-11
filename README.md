@@ -27,6 +27,11 @@ If you wish to use `SentenceTransformerEncoder` dense encoder, you will need to 
 pip install pinecone-text[dense]
 ```
 
+If you wish to use `OpenAIEncoder` dense encoder, you will need to install the `openai` extra:
+```bash
+pip install pinecone-text[openai]
+```
+
 ## Sparse Encoding
 
 To convert your own text corpus to sparse vectors, you can either use [BM25](https://www.pinecone.io/learn/semantic-search/#bm25) or [SPLADE](https://www.pinecone.io/learn/splade/).
@@ -41,7 +46,7 @@ To encode your documents and queries using BM25 as vector for dot product search
 > When conducting a search, you may come across queries that contain terms not found in the training corpus but are present in the database. To address this scenario, BM25Encoder uses a default document frequency value of 1 when encoding such terms. 
 #### Usage
 
-For an end-to-end example, you can refer to our Quora dataset generation with BM25 [notebook](https://github.com/pinecone-io/examples/blob/master/pinecone/sparse/bm25/bm25-vector-generation.ipynb).
+For an end-to-end example, you can refer to our Quora dataset generation with BM25 [notebook](https://colab.research.google.com/github/pinecone-io/examples/blob/master/learn/search/semantic-search/sparse/bm25/bm25-vector-generation.ipynb).
 
 ```python
 from pinecone_text.sparse import BM25Encoder
@@ -91,7 +96,7 @@ Currently the `SpladeEncoder` class supprts only the [naver/splade-cocondenser-e
 
 #### Usage
 
-For an end-to-end example, you can refer to our Quora dataset generation with SPLADE [notebook](https://github.com/pinecone-io/examples/blob/master/pinecone/sparse/splade/splade-vector-generation.ipynb).
+For an end-to-end example, you can refer to our Quora dataset generation with SPLADE [notebook](https://colab.research.google.com/github/pinecone-io/examples/blob/master/learn/search/semantic-search/sparse/splade/splade-vector-generation.ipynb).
 
 ```python
 from pinecone_text.sparse import SpladeEncoder
@@ -138,8 +143,9 @@ encoder.encode_queries(["Who jumped over the lazy dog?"])
 
 ### OpenAI models
 
-When using the `OpenAIEncoder`, you need to provide an API key for the OpenAI API, and store it in the `OPENAI_API_KEY` environment variable.
+When using the `OpenAIEncoder`, you need to provide an API key for the OpenAI API, and store it in the `OPENAI_API_KEY` environment variable before you import the encoder.
 
+By default the encoder will use `text-embedding-ada-002` as recommended by OpenAI. You can also specify a different model name using the `model_name` parameter.
 #### Usage
 ```python
 from pinecone_text.dense.openai_encoder import OpenAIEncoder
