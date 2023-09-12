@@ -73,6 +73,7 @@ bm25.load("bm25_params.json")
 If you want to use the default parameters for `BM25Encoder`, you can call the `default` method.
 The default parameters were fitted on the [MS MARCO](https://microsoft.github.io/msmarco/)  passage ranking dataset.
 ```python
+from pinecone_text.sparse import BM25Encoder
 bm25 = BM25Encoder.default()
 ```
 
@@ -125,7 +126,7 @@ When using `SentenceTransformerEncoder`, the models are downloaded from huggingf
 
 #### Usage
 ```python
-from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
+from pinecone_text.dense import SentenceTransformerEncoder
 
 encoder = SentenceTransformerEncoder("sentence-transformers/all-MiniLM-L6-v2")
 
@@ -142,7 +143,7 @@ When using the `OpenAIEncoder`, you need to provide an API key for the OpenAI AP
 
 #### Usage
 ```python
-from pinecone_text.dense.openai_encoder import OpenAIEncoder
+from pinecone_text.dense import OpenAIEncoder
 
 encoder = OpenAIEncoder() # defaults to the recommended model - "text-embedding-ada-002"
 
@@ -160,7 +161,7 @@ This method receives both a dense vector and a sparse vector, along with a conve
 ```python
 from pinecone_text.hybrid import hybrid_convex_scale
 from pinecone_text.sparse import SpladeEncoder
-from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
+from pinecone_text.dense import SentenceTransformerEncoder
 
 # Initialize Splade
 splade = SpladeEncoder()
