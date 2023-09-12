@@ -1,6 +1,13 @@
-import openai
 from typing import Union, List
 from pinecone_text.dense.base_dense_ecoder import BaseDenseEncoder
+
+try:
+    import openai
+except (OSError, ImportError, ModuleNotFoundError) as e:
+    raise ImportError(
+        "Failed to import openai. Make sure you install openai extra dependencies by running: "
+        "`pip install pinecone-text[openai]"
+    ) from e
 
 
 class OpenAIEncoder(BaseDenseEncoder):
