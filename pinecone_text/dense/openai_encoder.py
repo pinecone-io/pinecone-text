@@ -1,14 +1,6 @@
 from typing import Union, List
 from pinecone_text.dense.base_dense_ecoder import BaseDenseEncoder
 
-try:
-    import openai
-except (OSError, ImportError, ModuleNotFoundError) as e:
-    raise ImportError(
-        "Failed to import openai. Make sure you install openai extra dependencies by running: "
-        "`pip install pinecone-text[openai]"
-    ) from e
-
 
 class OpenAIEncoder(BaseDenseEncoder):
     """
@@ -18,6 +10,14 @@ class OpenAIEncoder(BaseDenseEncoder):
     """
 
     def __init__(self, model_name: str = "text-embedding-ada-002"):
+        try:
+            import openai
+        except (OSError, ImportError, ModuleNotFoundError) as e:
+            raise ImportError(
+                "Failed to import openai. Make sure you install openai extra "
+                "dependencies by running: "
+                "`pip install pinecone-text[openai]"
+            ) from e
         self._model_name = model_name
 
     def encode_documents(
@@ -43,6 +43,7 @@ class OpenAIEncoder(BaseDenseEncoder):
             )
 
         try:
+            import openai
             response = openai.Embedding.create(input=texts_input, model=self._model_name)  # type: ignore
         except openai.error.OpenAIError as e:
             # TODO: consider wrapping external provider errors
