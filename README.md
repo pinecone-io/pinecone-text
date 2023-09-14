@@ -104,6 +104,11 @@ from pinecone_text.sparse import SpladeEncoder
 # Initialize Splade
 splade = SpladeEncoder()
 
+# Or with "cuda" in case it's avialable
+# import pytorch
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# splade = SpladeEncoder(device=device)
+
 # encode a batch of documents
 documents = ["The quick brown fox jumps over the lazy dog",
              "The lazy dog is brown",
@@ -133,6 +138,11 @@ When using `SentenceTransformerEncoder`, the models are downloaded from huggingf
 from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
 
 encoder = SentenceTransformerEncoder("sentence-transformers/all-MiniLM-L6-v2")
+
+# Or with "cuda" in case it's avialable
+# import pytorch
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# encoder = SentenceTransformerEncoder("sentence-transformers/all-MiniLM-L6-v2", device=device)
 
 encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
 # [[0.21, 0.38, 0.15, ...]]
