@@ -8,14 +8,18 @@ the work of the research team led by Nils Reimers at the University of Stuttgart
 try:
     import torch
 except (OSError, ImportError, ModuleNotFoundError) as e:
-    torch = None
+    _torch_installed = False
+else:
+    _torch_installed = True
 
 from typing import Optional, Union, List
 
 try:
     from sentence_transformers import SentenceTransformer
 except (ImportError, ModuleNotFoundError) as e:
-     sentence_transformers = None
+     _transformers_installed = False
+else:
+    _transformers_installed = True
 
 
 from pinecone_text.dense.base_dense_ecoder import BaseDenseEncoder
@@ -28,7 +32,7 @@ class SentenceTransformerEncoder(BaseDenseEncoder):
         query_encoder_name: Optional[str] = None,
         device: Optional[str] = None,
     ):
-        if torch is None:
+        if not _torch_installed:
             raise ImportError(
                 """Failed to import torch. Make sure you install dense extra 
                 dependencies by running: `pip install pinecone-text[dense]`
@@ -39,7 +43,7 @@ class SentenceTransformerEncoder(BaseDenseEncoder):
         --index-url https://download.pytorch.org/whl/cpu`"""
             )
 
-        if sentence_transformers is None:
+        if not _transformers_installed:
             raise ImportError(
                 "Failed to import sentence transformers. Make sure you install dense "
                 "extra dependencies by running: `pip install pinecone-text[dense]`"

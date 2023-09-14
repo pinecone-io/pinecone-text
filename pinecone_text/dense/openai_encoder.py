@@ -4,7 +4,9 @@ from pinecone_text.dense.base_dense_ecoder import BaseDenseEncoder
 try:
     import openai
 except (OSError, ImportError, ModuleNotFoundError) as e:
-    openai = None
+    _openai_installed = False
+else:
+    _openai_installed = True
 
 class OpenAIEncoder(BaseDenseEncoder):
     """
@@ -14,7 +16,7 @@ class OpenAIEncoder(BaseDenseEncoder):
     """
 
     def __init__(self, model_name: str = "text-embedding-ada-002"):
-        if openai is None:
+        if not _openai_installed:
             raise ImportError(
                 "Failed to import openai. Make sure you install openai extra "
                 "dependencies by running: "
