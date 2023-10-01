@@ -17,7 +17,7 @@ from typing import Optional, Union, List
 try:
     from sentence_transformers import SentenceTransformer
 except (ImportError, ModuleNotFoundError) as e:
-     _transformers_installed = False
+    _transformers_installed = False
 else:
     _transformers_installed = True
 

@@ -8,6 +8,7 @@ except (OSError, ImportError, ModuleNotFoundError) as e:
 else:
     _openai_installed = True
 
+
 class OpenAIEncoder(BaseDenseEncoder):
     """
     OpenAI's text embedding wrapper. See https://platform.openai.com/docs/guides/embeddings
