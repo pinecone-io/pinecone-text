@@ -3,19 +3,17 @@ from typing import List, Union
 try:
     import torch
 except (OSError, ImportError, ModuleNotFoundError) as e:
-    raise ImportError(
-        """Failed to import torch. Make sure you install pytorch extra dependencies by running: `pip install pinecone-text[splade]`
-If this doesn't help, it is probably a CUDA error. If you do want to use GPU, please check your CUDA driver.
-If you want to use CPU only, run the following command:
-`pip uninstall -y torch torchvision;pip install -y torch torchvision --index-url https://download.pytorch.org/whl/cpu`"""
-    ) from e
+    _torch_installed = False
+else:
+    _torch_installed = True
 
 try:
     from transformers import AutoTokenizer, AutoModelForMaskedLM
-except (ImportError, ModuleNotFoundError) as e:
-    raise ImportError(
-        "Failed to import transformers. Make sure you install splade extra dependencies by running: `pip install pinecone-text[splade]`"
-    ) from e
+except (OSError, ImportError, ModuleNotFoundError) as e:
+    _transformers_installed = False
+else:
+    _transformers_installed = True
+
 
 from pinecone_text.sparse import SparseVector
 from pinecone_text.sparse.base_sparse_encoder import BaseSparseEncoder
@@ -44,6 +42,20 @@ class SpladeEncoder(BaseSparseEncoder):
             splade.encode_documents("this is a document") # [{"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}, ...]
             ```
         """
+        if not _torch_installed:
+            raise ImportError(
+                """Failed to import torch. Make sure you install pytorch extra dependencies by running: `pip install pinecone-text[splade]`
+        If this doesn't help, it is probably a CUDA error. If you do want to use GPU, please check your CUDA driver.
+        If you want to use CPU only, run the following command:
+        `pip uninstall -y torch torchvision;pip install -y torch torchvision --index-url https://download.pytorch.org/whl/cpu`"""
+            )
+
+        if not _transformers_installed:
+            raise ImportError(
+                "Failed to import transformers. Make sure you install splade "
+                "extra dependencies by running: `pip install pinecone-text[splade]`"
+            )
+
         if not 0 < max_seq_length <= 512:
             raise ValueError("max_seq_length must be between 1 and 512")
 
