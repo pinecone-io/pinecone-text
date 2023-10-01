@@ -5,16 +5,6 @@ from typing import List
 from nltk import word_tokenize, SnowballStemmer
 from nltk.corpus import stopwords
 
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
-
-try:
-    nltk.data.find("corpora/stopwords")
-except LookupError:
-    nltk.download("stopwords")
-
 
 class BM25Tokenizer:
     def __init__(
@@ -25,6 +15,8 @@ class BM25Tokenizer:
         stem: bool,
         language: str,
     ):
+        self.nltk_setup()
+
         self.lower_case = lower_case
         self.remove_punctuation = remove_punctuation
         self.remove_stopwords = remove_stopwords
@@ -38,6 +30,18 @@ class BM25Tokenizer:
             raise ValueError(
                 "Stemming applying lower case to tokens, so lower_case must be True if stem is True"
             )
+
+    @staticmethod
+    def nltk_setup() -> None:
+        try:
+            nltk.data.find("tokenizers/punkt")
+        except LookupError:
+            nltk.download("punkt")
+
+        try:
+            nltk.data.find("corpora/stopwords")
+        except LookupError:
+            nltk.download("stopwords")
 
     def __call__(self, text: str) -> List[str]:
         tokens = word_tokenize(text)

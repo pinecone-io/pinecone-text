@@ -1,2 +1,2 @@
-from openai_encoder import OpenAIEncoder
-from sentence_transformer_encoder import SentenceTransformerEncoder
+from .openai_encoder import OpenAIEncoder
+from .sentence_transformer_encoder import SentenceTransformerEncoder
