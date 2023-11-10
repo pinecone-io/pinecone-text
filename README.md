@@ -163,7 +163,7 @@ encoder.encode_queries(["Who jumped over the lazy dog?"])
 ## Combining Sparse and Dense Encodings for Hybrid Search
 To combine sparse and dense encodings for hybrid search, you can use the `hybrid_convex_scale` method on your query.
 
-This method receives both a dense vector and a sparse vector, along with a convex scaling parameter `alpha`. It returns a tuple consisting of the scaled dense and sparse vectors according to the following formula: `alpha * dense_vector + (1 - alpha) * sparse_vector`.
+This method receives both a dense vector and a sparse vector, along with a convex scaling parameter `alpha`. It returns a tuple consisting of the scaled dense and sparse vectors according to the following formula: `(alpha * dense_vector, (1 - alpha) * sparse_vector)`.
 ```python
 from pinecone_text.hybrid import hybrid_convex_scale
 from pinecone_text.sparse import SpladeEncoder
