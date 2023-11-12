@@ -19,6 +19,12 @@ class OpenAIEncoder(BaseDenseEncoder):
     """
 
     def __init__(self, model_name: str = "text-embedding-ada-002", **kwargs: Any):
+        """
+        Initialize the OpenAI encoder.
+
+        :param model_name: The name of the embedding model to use. See https://beta.openai.com/docs/api-reference/embeddings
+        :param kwargs: Additional arguments to pass to the underlying openai client. See https://github.com/openai/openai-python
+        """
         if not _openai_installed:
             raise ImportError(
                 "Failed to import openai. Make sure you install openai extra "
