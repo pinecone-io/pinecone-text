@@ -1,4 +1,4 @@
-from typing import Union, List, Any
+from typing import Union, List, Any, Optional
 from pinecone_text.dense.base_dense_ecoder import BaseDenseEncoder
 
 try:
@@ -18,7 +18,14 @@ class OpenAIEncoder(BaseDenseEncoder):
           Or you can pass them as arguments to the constructor as `api_key` and `organization`.
     """
 
-    def __init__(self, model_name: str = "text-embedding-ada-002", **kwargs: Any):
+    def __init__(
+        self,
+        model_name: str = "text-embedding-ada-002",
+        api_key: Optional[str] = None,
+        organization: Optional[str] = None,
+        base_url: Optional[str] = None,
+        **kwargs: Any,
+    ):
         """
         Initialize the OpenAI encoder.
 
@@ -32,7 +39,9 @@ class OpenAIEncoder(BaseDenseEncoder):
                 "`pip install pinecone-text[openai]"
             )
         self._model_name = model_name
-        self._client = openai.OpenAI(**kwargs)
+        self._client = openai.OpenAI(
+            api_key=api_key, organization=organization, base_url=base_url, **kwargs
+        )
 
     def encode_documents(
         self, texts: Union[str, List[str]]

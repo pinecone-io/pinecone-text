@@ -1,6 +1,6 @@
 import pytest
 from pinecone_text.dense import OpenAIEncoder
-from openai import OpenAIError
+from openai import OpenAIError, AuthenticationError
 
 
 DEFAULT_DIMENSION = 1536
@@ -20,9 +20,15 @@ def test_init_without_openai_installed():
 
 
 def test_init_with_kwargs():
-    client = OpenAIEncoder(api_key="test_api_key", organization="test_organization")
-    assert client._client.api_key == "test_api_key"
-    assert client._client.organization == "test_organization"
+    encoder = OpenAIEncoder(api_key="test_api_key",
+                            organization="test_organization",
+                            timeout=30)
+    assert encoder._client.api_key == "test_api_key"
+    assert encoder._client.organization == "test_organization"
+    assert encoder._client.timeout == 30
+
+    with pytest.raises(AuthenticationError):
+        encoder.encode_documents("test text")
 
 
 def test_encode_documents_single_text(openai_encoder):

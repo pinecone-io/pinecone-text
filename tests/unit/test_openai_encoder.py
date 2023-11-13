@@ -28,9 +28,14 @@ def test_init_without_openai_installed():
 
 def test_init_with_kwargs():
     with patch("pinecone_text.dense.openai_encoder.openai") as mock_openai:
-        OpenAIEncoder(api_key="test_api_key", organization="test_organization")
+        OpenAIEncoder(
+            api_key="test_api_key", organization="test_organization", timeout=30
+        )
         mock_openai.OpenAI.assert_called_with(
-            api_key="test_api_key", organization="test_organization"
+            api_key="test_api_key",
+            organization="test_organization",
+            base_url=None,
+            timeout=30,
         )
 
 
