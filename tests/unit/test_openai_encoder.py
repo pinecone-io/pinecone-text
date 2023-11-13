@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import patch, Mock
 from pinecone_text.dense import OpenAIEncoder
-from openai._exceptions import OpenAIError
 
 
 def create_mock_response(embeddings):
@@ -16,7 +15,7 @@ mock_multiple_embeddings = create_mock_response([[0.1, 0.2, 0.3], [0.4, 0.5, 0.6
 
 @pytest.fixture
 def openai_encoder():
-    with patch("pinecone_text.dense.openai_encoder.openai") as mock_openai:
+    with patch("pinecone_text.dense.openai_encoder.openai"):
         yield OpenAIEncoder()
 
 
@@ -39,65 +38,69 @@ def test_init_with_kwargs():
         )
 
 
-def test_encode_documents_single_text(openai_encoder):
+def encode_by_type(openai_encoder, encoding_function, test_input):
+    if encoding_function == "encode_documents":
+        return openai_encoder.encode_documents(test_input)
+    elif encoding_function == "encode_queries":
+        return openai_encoder.encode_queries(test_input)
+    pytest.fail(f"Unknown encoding function: {encoding_function}")
+
+
+@pytest.mark.parametrize(
+    "encoding_function",
+    [
+        ("encode_documents"),
+        ("encode_queries"),
+    ],
+)
+def test_encode_single_text(openai_encoder, encoding_function):
     with patch.object(
         openai_encoder._client, "embeddings", create=True
     ) as mock_embeddings:
         mock_embeddings.create.return_value = mock_single_embedding
-        result = openai_encoder.encode_documents("test text")
+        result = encode_by_type(openai_encoder, encoding_function, "test text")
         assert result == [0.1, 0.2, 0.3]
 
 
-def test_encode_documents_multiple_texts(openai_encoder):
+@pytest.mark.parametrize(
+    "encoding_function",
+    [
+        ("encode_documents"),
+        ("encode_queries"),
+    ],
+)
+def test_encode_multiple_texts(openai_encoder, encoding_function):
     with patch.object(
         openai_encoder._client, "embeddings", create=True
     ) as mock_embeddings:
         mock_embeddings.create.return_value = mock_multiple_embeddings
-        result = openai_encoder.encode_documents(["text1", "text2"])
+        result = encode_by_type(openai_encoder, encoding_function, ["text1", "text2"])
         assert result == [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
 
 
-def test_encode_documents_invalid_input(openai_encoder):
+@pytest.mark.parametrize(
+    "encoding_function",
+    [
+        ("encode_documents"),
+        ("encode_queries"),
+    ],
+)
+def test_encode_invalid_input(openai_encoder, encoding_function):
     with pytest.raises(ValueError):
-        openai_encoder.encode_documents(123)
+        encode_by_type(openai_encoder, encoding_function, 123)
 
 
-def test_encode_documents_error_handling(openai_encoder):
+@pytest.mark.parametrize(
+    "encoding_function",
+    [
+        ("encode_documents"),
+        ("encode_queries"),
+    ],
+)
+def test_encode_error_handling(openai_encoder, encoding_function):
     with patch.object(
         openai_encoder._client, "embeddings", create=True
     ) as mock_embeddings:
-        mock_embeddings.create.side_effect = OpenAIError("OpenAI API error")
-        with pytest.raises(OpenAIError, match="OpenAI API error"):
-            openai_encoder.encode_queries("test text")
-
-
-def test_encode_queries_single_text(openai_encoder):
-    with patch.object(
-        openai_encoder._client, "embeddings", create=True
-    ) as mock_embeddings:
-        mock_embeddings.create.return_value = mock_single_embedding
-        result = openai_encoder.encode_queries("test text")
-        assert result == [0.1, 0.2, 0.3]
-
-
-def test_encode_queries_multiple_texts(openai_encoder):
-    with patch.object(
-        openai_encoder._client, "embeddings", create=True
-    ) as mock_embeddings:
-        mock_embeddings.create.return_value = mock_multiple_embeddings
-        result = openai_encoder.encode_queries(["text1", "text2"])
-        assert result == [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
-
-
-def test_encode_queries_invalid_input(openai_encoder):
-    with pytest.raises(ValueError):
-        openai_encoder.encode_queries(123)
-
-
-def test_encode_queries_error_handling(openai_encoder):
-    with patch.object(
-        openai_encoder._client, "embeddings", create=True
-    ) as mock_embeddings:
-        mock_embeddings.create.side_effect = OpenAIError("OpenAI API error")
-        with pytest.raises(OpenAIError, match="OpenAI API error"):
-            openai_encoder.encode_queries("test text")
+        mock_embeddings.create.side_effect = ValueError("OpenAI API error")
+        with pytest.raises(ValueError, match="OpenAI API error"):
+            encode_by_type(openai_encoder, encoding_function, "test text")
