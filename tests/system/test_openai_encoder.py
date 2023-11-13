@@ -11,14 +11,6 @@ def openai_encoder():
     return OpenAIEncoder()
 
 
-def test_init_without_openai_installed():
-    try:
-        encoder = OpenAIEncoder()
-        assert encoder is not None
-    except ImportError:
-        pytest.fail("Failed to initialize OpenAIEncoder due to missing OpenAI library")
-
-
 def test_init_with_kwargs():
     encoder = OpenAIEncoder(
         api_key="test_api_key", organization="test_organization", timeout=30
