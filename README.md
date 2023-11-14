@@ -99,16 +99,13 @@ Currently the `SpladeEncoder` class supprts only the [naver/splade-cocondenser-e
 
 For an end-to-end example, you can refer to our Quora dataset generation with SPLADE [notebook](https://colab.research.google.com/github/pinecone-io/examples/blob/master/learn/search/semantic-search/sparse/splade/splade-vector-generation.ipynb).
 
+Note: If cuda is available, the model will automatically run on GPU. You can explicitly specify the device using the `device` parameter in the constructor.
+
 ```python
 from pinecone_text.sparse import SpladeEncoder
 
 # Initialize Splade
 splade = SpladeEncoder()
-
-# Or with "cuda" in case it's avialable
-# import pytorch
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# splade = SpladeEncoder(device=device)
 
 # encode a batch of documents
 documents = ["The quick brown fox jumps over the lazy dog",
@@ -132,18 +129,13 @@ For dense embedding we also provide a thin wrapper for the following models:
 
 ### Sentence Transformers models
 
-When using `SentenceTransformerEncoder`, the models are downloaded from huggingface and run locally.
+When using `SentenceTransformerEncoder`, the models are downloaded from huggingface and run locally. Also, if cuda is available, the model will automatically run on GPU. You can explicitly specify the device using the `device` parameter in the constructor.
 
 #### Usage
 ```python
 from pinecone_text.dense import SentenceTransformerEncoder
 
 encoder = SentenceTransformerEncoder("sentence-transformers/all-MiniLM-L6-v2")
-
-# Or with "cuda" in case it's avialable
-# import pytorch
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# encoder = SentenceTransformerEncoder("sentence-transformers/all-MiniLM-L6-v2", device=device)
 
 encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
 # [[0.21, 0.38, 0.15, ...]]

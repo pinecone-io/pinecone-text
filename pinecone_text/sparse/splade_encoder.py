@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 
 try:
     import torch
@@ -26,11 +26,11 @@ class SpladeEncoder(BaseSparseEncoder):
     Currently only supports inference with  naver/splade-cocondenser-ensembledistil
     """
 
-    def __init__(self, max_seq_length: int = 256, device: str = "cpu"):
+    def __init__(self, max_seq_length: int = 256, device: Optional[str] = None):
         """
         Args:
             max_seq_length: Maximum sequence length for the model. Must be between 1 and 512.
-            device: Device to use for inference.
+            device: Device to use for inference. Defaults to GPU if available, otherwise CPU.
 
         Example:
 
@@ -59,11 +59,13 @@ class SpladeEncoder(BaseSparseEncoder):
         if not 0 < max_seq_length <= 512:
             raise ValueError("max_seq_length must be between 1 and 512")
 
+        device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device
+
         model = "naver/splade-cocondenser-ensembledistil"
         self.tokenizer = AutoTokenizer.from_pretrained(model)
-        self.model = AutoModelForMaskedLM.from_pretrained(model).to(device)
+        self.model = AutoModelForMaskedLM.from_pretrained(model).to(self.device)
         self.max_seq_length = max_seq_length
-        self.device = device
 
     def encode_documents(
         self, texts: Union[str, List[str]]
