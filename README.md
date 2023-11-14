@@ -78,6 +78,7 @@ bm25.load("bm25_params.json")
 If you want to use the default parameters for `BM25Encoder`, you can call the `default` method.
 The default parameters were fitted on the [MS MARCO](https://microsoft.github.io/msmarco/)  passage ranking dataset.
 ```python
+from pinecone_text.sparse import BM25Encoder
 bm25 = BM25Encoder.default()
 ```
 
@@ -135,7 +136,7 @@ When using `SentenceTransformerEncoder`, the models are downloaded from huggingf
 
 #### Usage
 ```python
-from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
+from pinecone_text.dense import SentenceTransformerEncoder
 
 encoder = SentenceTransformerEncoder("sentence-transformers/all-MiniLM-L6-v2")
 
@@ -158,7 +159,7 @@ When using the `OpenAIEncoder`, you need to provide an API key for the OpenAI AP
 By default the encoder will use `text-embedding-ada-002` as recommended by OpenAI. You can also specify a different model name using the `model_name` parameter.
 #### Usage
 ```python
-from pinecone_text.dense.openai_encoder import OpenAIEncoder
+from pinecone_text.dense import OpenAIEncoder
 
 encoder = OpenAIEncoder() # defaults to the recommended model - "text-embedding-ada-002"
 
@@ -172,11 +173,11 @@ encoder.encode_queries(["Who jumped over the lazy dog?"])
 ## Combining Sparse and Dense Encodings for Hybrid Search
 To combine sparse and dense encodings for hybrid search, you can use the `hybrid_convex_scale` method on your query.
 
-This method receives both a dense vector and a sparse vector, along with a convex scaling parameter `alpha`. It returns a tuple consisting of the scaled dense and sparse vectors according to the following formula: `alpha * dense_vector + (1 - alpha) * sparse_vector`.
+This method receives both a dense vector and a sparse vector, along with a convex scaling parameter `alpha`. It returns a tuple consisting of the scaled dense and sparse vectors according to the following formula: `(alpha * dense_vector, (1 - alpha) * sparse_vector)`.
 ```python
 from pinecone_text.hybrid import hybrid_convex_scale
 from pinecone_text.sparse import SpladeEncoder
-from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
+from pinecone_text.dense import SentenceTransformerEncoder
 
 # Initialize Splade
 splade = SpladeEncoder()
