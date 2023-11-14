@@ -1,4 +1,7 @@
+import pytest
+from unittest.mock import patch
 from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
+import pinecone_text.dense.sentence_transformer_encoder
 
 DEFAULT_DIMENSION = 384
 
@@ -58,10 +61,17 @@ class TestSentenceTransformerEncoder:
         assert len(encoded_queries) == 1
         assert len(encoded_queries[0]) == DEFAULT_DIMENSION
 
-    def test_init_with_device_override(self):
-        encoder = SentenceTransformerEncoder(
-            document_encoder_name="sentence-transformers/all-MiniLM-L6-v2",
-            device="cuda"
-        )
-        assert encoder.document_encoder.device == "cuda"
-        assert encoder.query_encoder.device == "cuda"
+    @pytest.mark.parametrize("cuda_available, device_input, expected_device", [
+        (True, None, "cuda"),
+        (False, None, "cpu"),
+        (True, "cpu", "cpu"),
+        (False, "cuda", "cuda")
+    ])
+    def test_init_cuda_available(self, cuda_available, device_input, expected_device):
+        with patch('torch.cuda.is_available', return_value=cuda_available):
+            encoder = SentenceTransformerEncoder(
+                document_encoder_name="sentence-transformers/all-MiniLM-L6-v2",
+                device=device_input
+            )
+            assert str(encoder.document_encoder._target_device) == expected_device
+            assert str(encoder.query_encoder._target_device) == expected_device
