@@ -24,11 +24,8 @@ def test_init_with_kwargs():
 
 
 def encode_by_type(openai_encoder, encoding_function, test_input):
-    if encoding_function == "encode_documents":
-        return openai_encoder.encode_documents(test_input)
-    elif encoding_function == "encode_queries":
-        return openai_encoder.encode_queries(test_input)
-    pytest.fail(f"Unknown encoding function: {encoding_function}")
+    func = getattr(openai_encoder, encoding_function)
+    return func(test_input)
 
 
 @pytest.mark.parametrize(
