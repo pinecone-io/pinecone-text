@@ -57,3 +57,11 @@ class TestSentenceTransformerEncoder:
         encoded_queries = self.encoder.encode_queries([self.corpus[0]])
         assert len(encoded_queries) == 1
         assert len(encoded_queries[0]) == DEFAULT_DIMENSION
+
+    def test_init_with_device_override(self):
+        encoder = SentenceTransformerEncoder(
+            document_encoder_name="sentence-transformers/all-MiniLM-L6-v2",
+            device="cuda"
+        )
+        assert encoder.document_encoder.device == "cuda"
+        assert encoder.query_encoder.device == "cuda"
