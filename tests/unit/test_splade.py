@@ -1,3 +1,7 @@
+from unittest.mock import patch
+
+import torch
+import pytest
 from pytest import raises
 from pinecone_text.sparse import SpladeEncoder
 
@@ -49,3 +53,26 @@ class TestSplade:
 
         with raises(ValueError):
             SpladeEncoder(max_seq_length=513)
+
+    @pytest.mark.parametrize(
+        "cuda_available, device_input, expected_device",
+        [
+            (True, None, "cuda"),
+            (False, None, "cpu"),
+            (True, "cpu", "cpu"),
+            (False, "cuda", "cuda"),
+        ],
+    )
+    def test_init_cuda_available(self, cuda_available, device_input, expected_device):
+        system_cuda_available = torch.cuda.is_available()
+
+        with patch("torch.cuda.is_available", return_value=cuda_available):
+            if not system_cuda_available and expected_device == "cuda":
+                with raises(
+                    AssertionError, match="Torch not compiled with CUDA enabled"
+                ):
+                    SpladeEncoder(device=device_input)
+            else:
+                encoder = SpladeEncoder(device=device_input)
+                assert encoder.device == expected_device
+                assert encoder.device == expected_device

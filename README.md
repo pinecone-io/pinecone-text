@@ -99,6 +99,8 @@ Currently the `SpladeEncoder` class supprts only the [naver/splade-cocondenser-e
 
 For an end-to-end example, you can refer to our Quora dataset generation with SPLADE [notebook](https://colab.research.google.com/github/pinecone-io/examples/blob/master/learn/search/semantic-search/sparse/splade/splade-vector-generation.ipynb).
 
+Note: If cuda is available, the model will automatically run on GPU. You can explicitly override the device using the `device` parameter in the constructor.
+
 ```python
 from pinecone_text.sparse import SpladeEncoder
 
@@ -127,7 +129,7 @@ For dense embedding we also provide a thin wrapper for the following models:
 
 ### Sentence Transformers models
 
-When using `SentenceTransformerEncoder`, the models are downloaded from huggingface and run locally.
+When using `SentenceTransformerEncoder`, the models are downloaded from huggingface and run locally. Also, if cuda is available, the model will automatically run on GPU. You can explicitly override the device using the `device` parameter in the constructor.
 
 #### Usage
 ```python
