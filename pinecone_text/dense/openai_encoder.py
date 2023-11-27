@@ -79,19 +79,19 @@ class OpenAIEncoder(BaseDenseEncoder):
         return [result.embedding for result in response.data]
 
 
-class AzureOpenAIEncoder(BaseDenseEncoder):
+class AzureOpenAIEncoder(OpenAIEncoder):
     """
-    OpenAI's text embedding wrapper. See https://platform.openai.com/docs/guides/embeddings
+    Azure OpenAI's text embedding wrapper.
+    See https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/understand-embeddings
 
-    Note: You should provide an API key and organization in the environment variables OPENAI_API_KEY and OPENAI_ORG.
-          Or you can pass them as arguments to the constructor as `api_key` and `organization`.
+    Note: You should provide an API key in the environment variables AZURE_OPENAI_API_KEY.
+          Or you can pass it as an arguments to the constructor as `api_key`.
     """
 
     def __init__(
         self,
         model_name: str = "text-embedding-ada-002",
         api_key: Optional[str] = None,
-        organization: Optional[str] = None,
         base_url: Optional[str] = None,
         **kwargs: Any,
     ):
@@ -115,37 +115,3 @@ class AzureOpenAIEncoder(BaseDenseEncoder):
             base_url=base_url,
             **kwargs,
         )
-
-    def encode_documents(
-        self, texts: Union[str, List[str]]
-    ) -> Union[List[float], List[List[float]]]:
-        return self._encode(texts)
-
-    def encode_queries(
-        self, texts: Union[str, List[str]]
-    ) -> Union[List[float], List[List[float]]]:
-        return self._encode(texts)
-
-    def _encode(
-        self, texts: Union[str, List[str]]
-    ) -> Union[List[float], List[List[float]]]:
-        if isinstance(texts, str):
-            texts_input = [texts]
-        elif isinstance(texts, list):
-            texts_input = texts
-        else:
-            raise ValueError(
-                f"texts must be a string or list of strings, got: {type(texts)}"
-            )
-
-        try:
-            response = self._client.embeddings.create(
-                input=texts_input, model=self._model_name
-            )
-        except OpenAIError as e:
-            # TODO: consider wrapping external provider errors
-            raise e
-
-        if isinstance(texts, str):
-            return response.data[0].embedding
-        return [result.embedding for result in response.data]
