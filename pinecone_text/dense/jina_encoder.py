@@ -75,4 +75,8 @@ class JinaEncoder(BaseDenseEncoder):
         sorted_embeddings = sorted(embeddings, key=lambda e: e["index"])  # type: ignore
 
         # Return just the embeddings
-        return [result["embedding"] for result in sorted_embeddings]
+        res = [result["embedding"] for result in sorted_embeddings]
+
+        if isinstance(texts, str):
+            res = res[0]
+        return res
