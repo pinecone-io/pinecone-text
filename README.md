@@ -32,6 +32,11 @@ If you wish to use `OpenAIEncoder` dense encoder, you will need to install the `
 pip install pinecone-text[openai]
 ```
 
+If you wish to use `JinaEncoder` dense encoder, you will need to install the `jina` extra:
+```bash
+pip install pinecone-text[jina]
+```
+
 ## Sparse Encoding
 
 To convert your own text corpus to sparse vectors, you can either use [BM25](https://www.pinecone.io/learn/semantic-search/#bm25) or [SPLADE](https://www.pinecone.io/learn/splade/).
@@ -160,6 +165,26 @@ encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
 
 encoder.encode_queries(["Who jumped over the lazy dog?"])
 # [[0.11, 0.43, 0.67, ...]]
+```
+
+### Jina AI models
+
+When using the `JinaEncoder`, you need to provide an API key for the Jina Embeddings API, and store it in the `JINA_API_KEY` environment variable before you import the encoder.
+
+By default the encoder will use `jina-embeddings-v2-base-en`. You can also specify a different model name using the `model_name` parameter.
+
+#### Usage
+
+```python
+from pinecone_text.dense import JinaEncoder
+
+encoder = JinaEncoder() # defaults to the recommended model - "text-embedding-ada-002"
+
+encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
+# [[-0.62586284, -0.54578537, 0.5570845, ...]]
+
+encoder.encode_queries(["Who jumped over the lazy dog?"])
+# [[-0.43374294, -0.42069837, 0.773763, ...]]
 ```
 
 ## Combining Sparse and Dense Encodings for Hybrid Search

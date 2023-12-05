@@ -21,6 +21,7 @@ openai =  { version = "^1.2.3", optional = true }
 splade = ["torch", "transformers", "sentence-transformers"]
 dense = ["torch", "transformers", "sentence-transformers", "openai"]
 openai = ["openai"]
+jina = ["requests"]
 
 [tool.poetry.group.dev]
 optional = true
