@@ -45,4 +45,5 @@ jobs:
       if: github.event_name == 'merge_group'
       env:
          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+         CO_API_KEY: ${{ secrets.CO_API_KEY }}
       run: poetry run pytest tests/system
