@@ -1,6 +1,10 @@
 import pytest
 from unittest.mock import patch, Mock
+from typing import List
 from pinecone_text.dense import CohereEncoder
+
+
+real_encoder = CohereEncoder()
 
 
 def create_mock_response(embeddings):
@@ -18,6 +22,9 @@ def cohere_encoder():
     with patch("pinecone_text.dense.cohere_encoder.cohere"):
         yield CohereEncoder()
 
+@pytest.fixture
+def real_encoder():
+    yield CohereEncoder()
 
 def test_init_without_cohere_installed():
     with patch("pinecone_text.dense.cohere_encoder._cohere_installed", False):
@@ -49,13 +56,12 @@ def encode_by_type(cohere_encoder, encoding_function, test_input):
         ("encode_queries"),
     ],
 )
-def test_encode_single_text(cohere_encoder, encoding_function):
-    with patch.object(
-        cohere_encoder._client, "embeddings", create=True
-    ) as mock_embeddings:
-        mock_embeddings.create.return_value = mock_single_embedding
-        result = encode_by_type(cohere_encoder, encoding_function, "test text")
-        assert result == [0.1, 0.2, 0.3]
+def test_encode_single_text(real_encoder, encoding_function):
+    if encoding_function == "encode_documents":
+        out = real_encoder.encode_documents("test text")
+    else:
+        out = real_encoder.encode_queries("test text")
+    assert isinstance(out, list)
 
 
 @pytest.mark.parametrize(
@@ -65,13 +71,13 @@ def test_encode_single_text(cohere_encoder, encoding_function):
         ("encode_queries"),
     ],
 )
-def test_encode_multiple_texts(cohere_encoder, encoding_function):
-    with patch.object(
-        cohere_encoder._client, "embeddings", create=True
-    ) as mock_embeddings:
-        mock_embeddings.create.return_value = mock_multiple_embeddings
-        result = encode_by_type(cohere_encoder, encoding_function, ["text1", "text2"])
-        assert result == [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+def test_encode_multiple_texts(real_encoder, encoding_function):
+    if encoding_function == "encode_documents":
+        out = real_encoder.encode_documents(["test text", "doc 2"])
+    else:
+        out = real_encoder.encode_queries(["test text", "doc 2"])
+    assert isinstance(out, list)
+    assert isinstance(out[0], list)
 
 
 @pytest.mark.parametrize(

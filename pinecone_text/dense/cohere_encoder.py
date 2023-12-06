@@ -45,7 +45,7 @@ class CohereEncoder(BaseDenseEncoder):
                 "`pip install pinecone-text[cohere]"
             )
         self._model_name = model_name
-        self._client = cohere.Client(api_key=api_key)
+        self._client = cohere.Client(api_key=api_key, **kwargs)
 
     def encode_documents(
         self, texts: Union[str, List[str]]
