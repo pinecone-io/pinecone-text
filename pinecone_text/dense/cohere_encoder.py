@@ -1,4 +1,4 @@
-from enum import Enum, StrEnum
+from enum import Enum
 from typing import Union, List, Any, Optional
 from pinecone_text.dense.base_dense_ecoder import BaseDenseEncoder
 
@@ -11,7 +11,7 @@ else:
     _cohere_installed = True
 
 
-class CohereEncoderName(StrEnum):
+class CohereEncoderName(Enum):
     """
     Supported Cohere encoder models.
     """
@@ -42,7 +42,7 @@ class CohereEncoder(BaseDenseEncoder):
 
     def __init__(
         self,
-        model_name: CohereEncoderName = CohereEncoderName.ENGLISH_V3,
+        model_name: str = "embed-english-v3.0",
         api_key: Optional[str] = None,
         **kwargs: Any,
     ):
