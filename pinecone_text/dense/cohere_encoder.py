@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, StrEnum
 from typing import Union, List, Any, Optional
 from pinecone_text.dense.base_dense_ecoder import BaseDenseEncoder
 
@@ -10,6 +10,20 @@ except (OSError, ImportError, ModuleNotFoundError) as e:
 else:
     _cohere_installed = True
 
+
+class CohereEncoderName(StrEnum):
+    """
+    Supported Cohere encoder models.
+    """
+    ENGLISH_V3 = "embed-english-v3.0"
+    ENGLISH_LIGHT_V3 = "embed-english-light-3.0"
+    MULTILINGUAL_V3 = "embed-multilingual-v3.0"
+    MULTILINGUAL_LIGHT_V3 = "embed-multilingual-light-v3.0"
+
+    @classmethod
+    def list_models(cls):
+        """Method to get a list of all model names."""
+        return [model.value for model in cls]
 
 class CohereInputType(Enum):
     SEARCH_DOCUMENT = "search_document"
@@ -28,7 +42,7 @@ class CohereEncoder(BaseDenseEncoder):
 
     def __init__(
         self,
-        model_name: str = "embed-multilingual-v3.0",
+        model_name: CohereEncoderName = CohereEncoderName.ENGLISH_V3,
         api_key: Optional[str] = None,
         **kwargs: Any,
     ):
@@ -43,6 +57,11 @@ class CohereEncoder(BaseDenseEncoder):
                 "Failed to import cohere. Make sure you install cohere extra "
                 "dependencies by running: "
                 "`pip install pinecone-text[cohere]"
+            )
+        if model_name not in CohereEncoderName.list_models():
+            raise ValueError(
+                f"Model '{model_name}' not supported. Please use one of:"+"\n"+
+                "\n".join([f"- {x}" for x in CohereEncoderName.list_models()])
             )
         self._model_name = model_name
         self._client = cohere.Client(api_key=api_key, **kwargs)

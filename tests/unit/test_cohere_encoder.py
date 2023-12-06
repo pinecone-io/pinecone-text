@@ -90,3 +90,8 @@ def test_encode_multiple_texts(real_encoder, encoding_function):
 def test_encode_invalid_input(cohere_encoder, encoding_function):
     with pytest.raises(ValueError):
         encode_by_type(cohere_encoder, encoding_function, 123)
+
+
+def test_invalid_model():
+    with pytest.raises(ValueError):
+        CohereEncoder(model_name="not-supported-model")
