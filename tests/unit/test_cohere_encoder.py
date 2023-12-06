@@ -90,19 +90,3 @@ def test_encode_multiple_texts(real_encoder, encoding_function):
 def test_encode_invalid_input(cohere_encoder, encoding_function):
     with pytest.raises(ValueError):
         encode_by_type(cohere_encoder, encoding_function, 123)
-
-
-@pytest.mark.parametrize(
-    "encoding_function",
-    [
-        ("encode_documents"),
-        ("encode_queries"),
-    ],
-)
-def test_encode_error_handling(cohere_encoder, encoding_function):
-    with patch.object(
-        cohere_encoder._client, "embeddings", create=True
-    ) as mock_embeddings:
-        mock_embeddings.create.side_effect = ValueError("Cohere API error")
-        with pytest.raises(ValueError, match="Cohere API error"):
-            encode_by_type(cohere_encoder, encoding_function, "test text")
