@@ -1,6 +1,8 @@
 name: Pull-request CI
 
-on: push
+on:
+  - pull_request
+  - merge_group
 
 jobs:
   run-tests:
@@ -36,7 +38,11 @@ jobs:
 
     - run: poetry run mypy .
 
-    - name: Run tests
+    - name: Run unit tests
+      run: poetry run pytest tests/unit
+
+    - name: Run system tests
+      if: github.event_name == 'merge_group'
       env:
          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: poetry run pytest tests
+      run: poetry run pytest tests/system
