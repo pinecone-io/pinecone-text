@@ -36,7 +36,7 @@ class CohereEncoder(BaseDenseEncoder):
     """
     Cohere's text embedding wrapper. See https://docs.cohere.com/reference/embed
 
-    Note: You should provide an API key as the environment variable COHERE_API_KEY.
+    Note: You should provide an API key as the environment variable `CO_API_KEY`.
           Or you can pass it as argument to the constructor as `api_key`.
     """
 
