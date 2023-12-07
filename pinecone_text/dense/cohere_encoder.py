@@ -83,7 +83,6 @@ class CohereEncoder(BaseDenseEncoder):
         self, texts: Union[str, List[str]], input_type: str
     ) -> Union[List[float], List[List[float]]]:
         if isinstance(texts, str):
-            print("turning str to [str]")
             texts_input = [texts]
         elif isinstance(texts, list):
             texts_input = texts
