@@ -15,15 +15,17 @@ class CohereEncoderName(Enum):
     """
     Supported Cohere encoder models.
     """
+
     ENGLISH_V3 = "embed-english-v3.0"
     ENGLISH_LIGHT_V3 = "embed-english-light-3.0"
     MULTILINGUAL_V3 = "embed-multilingual-v3.0"
     MULTILINGUAL_LIGHT_V3 = "embed-multilingual-light-v3.0"
 
     @classmethod
-    def list_models(cls):
+    def list_models(cls) -> List[str]:
         """Method to get a list of all model names."""
         return [model.value for model in cls]
+
 
 class CohereInputType(Enum):
     SEARCH_DOCUMENT = "search_document"
@@ -60,8 +62,9 @@ class CohereEncoder(BaseDenseEncoder):
             )
         if model_name not in CohereEncoderName.list_models():
             raise ValueError(
-                f"Model '{model_name}' not supported. Please use one of:"+"\n"+
-                "\n".join([f"- {x}" for x in CohereEncoderName.list_models()])
+                f"Model '{model_name}' not supported. Please use one of:"
+                + "\n"
+                + "\n".join([f"- {x}" for x in CohereEncoderName.list_models()])
             )
         self._model_name = model_name
         self._client = cohere.Client(api_key=api_key, **kwargs)
@@ -69,25 +72,18 @@ class CohereEncoder(BaseDenseEncoder):
     def encode_documents(
         self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
-        embeds = self._encode(texts, CohereInputType.SEARCH_DOCUMENT.value)
-        if isinstance(texts, str):
-            return embeds[0]
-        else:
-            return embeds
+        return self._encode(texts, CohereInputType.SEARCH_DOCUMENT.value)
 
     def encode_queries(
         self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
-        embeds = self._encode(texts, CohereInputType.SEARCH_QUERY.value)
-        if isinstance(texts, str):
-            return embeds[0]
-        else:
-            return embeds
+        return self._encode(texts, CohereInputType.SEARCH_QUERY.value)
 
     def _encode(
         self, texts: Union[str, List[str]], input_type: str
     ) -> Union[List[float], List[List[float]]]:
         if isinstance(texts, str):
+            print("turning str to [str]")
             texts_input = [texts]
         elif isinstance(texts, list):
             texts_input = texts
@@ -102,10 +98,11 @@ class CohereEncoder(BaseDenseEncoder):
                 model=self._model_name,
                 input_type=input_type,
             )
+            print(f"output: {response}")
         except CohereError as e:
             # TODO: consider wrapping external provider errors
             raise e
 
         if isinstance(texts, str):
-            return response.embeddings
+            return response.embeddings[0]
         return [embedding for embedding in response.embeddings]

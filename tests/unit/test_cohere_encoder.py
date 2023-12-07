@@ -22,9 +22,11 @@ def cohere_encoder():
     with patch("pinecone_text.dense.cohere_encoder.cohere"):
         yield CohereEncoder()
 
+
 @pytest.fixture
 def real_encoder():
     yield CohereEncoder()
+
 
 def test_init_without_cohere_installed():
     with patch("pinecone_text.dense.cohere_encoder._cohere_installed", False):
