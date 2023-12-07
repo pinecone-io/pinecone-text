@@ -4,7 +4,7 @@ from typing import List
 from pinecone_text.dense import CohereEncoder
 
 
-real_encoder = CohereEncoder()
+real_encoder = CohereEncoder(check_api_key=False)
 
 
 def create_mock_response(embeddings):
