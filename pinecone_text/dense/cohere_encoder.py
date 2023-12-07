@@ -98,7 +98,6 @@ class CohereEncoder(BaseDenseEncoder):
                 model=self._model_name,
                 input_type=input_type,
             )
-            print(f"output: {response}")
         except CohereError as e:
             # TODO: consider wrapping external provider errors
             raise e
