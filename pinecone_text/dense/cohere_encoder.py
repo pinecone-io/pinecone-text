@@ -78,7 +78,11 @@ class CohereEncoder(BaseDenseEncoder):
     def encode_queries(
         self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
-        return self._encode(texts, CohereInputType.SEARCH_QUERY.value)
+        embeds = self._encode(texts, CohereInputType.SEARCH_QUERY.value)
+        if isinstance(texts, str):
+            return embeds[0]
+        else:
+            return embeds
 
     def _encode(
         self, texts: Union[str, List[str]], input_type: str
