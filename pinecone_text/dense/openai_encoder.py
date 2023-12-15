@@ -66,17 +66,23 @@ class OpenAIEncoder(BaseDenseEncoder):
                 f"texts must be a string or list of strings, got: {type(texts)}"
             )
 
-        try:
-            response = self._client.embeddings.create(
-                input=texts_input, model=self._model_name
-            )
-        except OpenAIError as e:
-            # TODO: consider wrapping external provider errors
-            raise e
+        batch_size = 16  # Azure OpenAI limit as of 2023-11-27
+        result = []
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i : i + batch_size]
+            try:
+                response = self._client.embeddings.create(
+                    input=batch, model=self._model_name
+                )
+            except OpenAIError as e:
+                # TODO: consider wrapping external provider errors
+                raise e
 
-        if isinstance(texts, str):
-            return response.data[0].embedding
-        return [result.embedding for result in response.data]
+            if isinstance(batch, str):
+                result.extend(response.data[0].embedding)
+            result.extend([result.embedding for result in response.data])
+
+        return result
 
 
 class AzureOpenAIEncoder(OpenAIEncoder):
