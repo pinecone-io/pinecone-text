@@ -162,6 +162,9 @@ encoder.encode_queries(["Who jumped over the lazy dog?"])
 # [[0.11, 0.43, 0.67, ...]]
 ```
 
+Pinecone text also supports Azure OpenAI API. To use it, you need to import the `AzureOpenAIEncoder` class instead of `OpenAIEncoder`. You also need to pass Azure specific environment variables to the constructor, along with your specific embeddings  deployment as the model name. For more information please follow the `AzureOpenAIEncoder` documentation.
+
+
 ## Combining Sparse and Dense Encodings for Hybrid Search
 To combine sparse and dense encodings for hybrid search, you can use the `hybrid_convex_scale` method on your query.
 
