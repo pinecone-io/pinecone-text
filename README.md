@@ -5,7 +5,7 @@
     <br>
 </h1>
 
-The Pinecone Text Client is a Python package that provides text utilities designed for seamless integration with Pinecone's [sparse-dense](https://docs.pinecone.io/docs/hybrid-search) (hybrid) semantic search.
+Thise Pinecone Text Client is a Python package that provides text utilities designed for seamless integration with Pinecone's [sparse-dense](https://docs.pinecone.io/docs/hybrid-search) (hybrid) semantic search.
 
 > **_⚠️ Warning_**
 >
