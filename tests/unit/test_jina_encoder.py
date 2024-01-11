@@ -20,10 +20,16 @@ def test_encode_single_text(encoding_function):
         # Configure the mock to return a specific response
         mock_response = requests.Response()
         mock_response.status_code = 200
-        mock_response._content = json.dumps({"model": "jina-embeddings-v2-base-en", "object": "list",
-                                             "usage": {"total_tokens": 6, "prompt_tokens": 6},
-                                             "data": [{"object": "embedding", "index": 0,
-                                                       "embedding": [0.1, 0.2, 0.3]}]}).encode()
+        mock_response._content = json.dumps(
+            {
+                "model": "jina-embeddings-v2-base-en",
+                "object": "list",
+                "usage": {"total_tokens": 6, "prompt_tokens": 6},
+                "data": [
+                    {"object": "embedding", "index": 0, "embedding": [0.1, 0.2, 0.3]}
+                ],
+            }
+        ).encode()
 
         mock_post.return_value = mock_response
         result = getattr(encoder, encoding_function)("test text")
@@ -43,11 +49,17 @@ def test_encode_multiple_text(encoding_function):
         # Configure the mock to return a specific response
         mock_response = requests.Response()
         mock_response.status_code = 200
-        mock_response._content = json.dumps({"model": "jina-embeddings-v2-base-en", "object": "list",
-                                             "usage": {"total_tokens": 6, "prompt_tokens": 6},
-                                             "data": [{"object": "embedding", "index": 0, "embedding": [0.1, 0.2, 0.3]},
-                                                      {"object": "embedding", "index": 1,
-                                                       "embedding": [0.4, 0.5, 0.6]}]}).encode()
+        mock_response._content = json.dumps(
+            {
+                "model": "jina-embeddings-v2-base-en",
+                "object": "list",
+                "usage": {"total_tokens": 6, "prompt_tokens": 6},
+                "data": [
+                    {"object": "embedding", "index": 0, "embedding": [0.1, 0.2, 0.3]},
+                    {"object": "embedding", "index": 1, "embedding": [0.4, 0.5, 0.6]},
+                ],
+            }
+        ).encode()
 
         mock_post.return_value = mock_response
         result = getattr(encoder, encoding_function)(["test text", "text 2"])

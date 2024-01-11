@@ -15,10 +15,10 @@ class JinaEncoder(BaseDenseEncoder):
     """
 
     def __init__(
-            self,
-            model_name: str = "jina-embeddings-v2-base-en",
-            api_key: Optional[str] = None,
-            **kwargs: Any,
+        self,
+        model_name: str = "jina-embeddings-v2-base-en",
+        api_key: Optional[str] = None,
+        **kwargs: Any,
     ):
         """
         Initialize the OpenAI encoder.
@@ -30,7 +30,9 @@ class JinaEncoder(BaseDenseEncoder):
             api_key = os.environ.get('JINA_API_KEY', None)
 
         if api_key is None:
-            raise ValueError('JinaEncoder requires an API key to work. Please provide `api_key` argument or set `JINA_API_KEY` environment variable')
+            raise ValueError(
+                'JinaEncoder requires an API key to work. Please provide `api_key` argument or set `JINA_API_KEY` environment variable'
+            )
         self._model_name = model_name
         self._session = requests.Session()
         self._session.headers.update(
@@ -42,17 +44,17 @@ class JinaEncoder(BaseDenseEncoder):
         )
 
     def encode_documents(
-            self, texts: Union[str, List[str]]
+        self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
         return self._encode(texts)
 
     def encode_queries(
-            self, texts: Union[str, List[str]]
+        self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
         return self._encode(texts)
 
     def _encode(
-            self, texts: Union[str, List[str]]
+        self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
         if isinstance(texts, str):
             texts_input = [texts]
