@@ -46,4 +46,9 @@ jobs:
       env:
          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
          CO_API_KEY: ${{ secrets.CO_API_KEY }}
+         AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+         AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+         OPENAI_API_VERSION: ${{ secrets.OPENAI_API_VERSION }}
+         EMBEDDINGS_AZURE_OPENAI_DEPLOYMENT_NAME: ${{ secrets.EMBEDDINGS_AZURE_OPENAI_DEPLOYMENT_NAME }}
+
       run: poetry run pytest tests/system

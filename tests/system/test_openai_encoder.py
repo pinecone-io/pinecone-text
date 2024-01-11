@@ -1,19 +1,28 @@
 import pytest
-from pinecone_text.dense import OpenAIEncoder
+import os
+from pinecone_text.dense import OpenAIEncoder, AzureOpenAIEncoder
 from openai import BadRequestError, AuthenticationError
 
 
 DEFAULT_DIMENSION = 1536
 
 
-@pytest.fixture
-def openai_encoder():
-    return OpenAIEncoder()
+@pytest.fixture(params=[OpenAIEncoder, AzureOpenAIEncoder])
+def openai_encoder(request):
+    if request.param == OpenAIEncoder:
+        return request.param()
+    else:
+        model_name = os.environ.get("EMBEDDINGS_AZURE_OPENAI_DEPLOYMENT_NAME")
+        return request.param(model_name=model_name)
 
 
-def test_init_with_kwargs():
-    encoder = OpenAIEncoder(
-        api_key="test_api_key", organization="test_organization", timeout=30
+@pytest.mark.parametrize("encoder_class", [OpenAIEncoder, AzureOpenAIEncoder])
+def test_init_with_kwargs(encoder_class):
+    encoder = encoder_class(
+        api_key="test_api_key",
+        organization="test_organization",
+        timeout=30,
+        model_name="test_model_name",
     )
     assert encoder._client.api_key == "test_api_key"
     assert encoder._client.organization == "test_organization"
