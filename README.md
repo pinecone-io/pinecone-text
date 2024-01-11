@@ -186,5 +186,5 @@ dense_vector = sentence_transformer.encode_queries("Which fox is brown?")
 
 # combine sparse and dense vectors
 hybrid_dense, hybrid_sparse = hybrid_convex_scale(dense_vector, sparse_vector, alpha=0.8)
-# ([-0.21, 0.38, 0.15, ...], {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.18, ...]})
+# ([-0.21, 0.38, 0.15, ...], {"indices": [102, 16, 19, ...], "values": [0.21, 0.11, 0.18, ...]})
 ```
