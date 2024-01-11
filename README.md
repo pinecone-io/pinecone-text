@@ -5,7 +5,7 @@
     <br>
 </h1>
 
-Thise Pinecone Text Client is a Python package that provides text utilities designed for seamless integration with Pinecone's [sparse-dense](https://docs.pinecone.io/docs/hybrid-search) (hybrid) semantic search.
+The Pinecone Text Client is a Python package that provides text utilities designed for seamless integration with Pinecone's [sparse-dense](https://docs.pinecone.io/docs/hybrid-search) (hybrid) semantic search.
 
 > **_⚠️ Warning_**
 >
@@ -61,11 +61,11 @@ bm25.fit(corpus)
 
 # Encode a new document (for upsert to Pinecone index)
 doc_sparse_vector = bm25.encode_documents("The brown fox is quick")
-# {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
+# {"indices": [102, 18, 12, ...], "values": [0.22, 0.38, 0.15, ...]}
 
 # Encode a query (for search in Pinecone index)
 query_sparse_vector = bm25.encode_queries("Which fox is brown?")
-# {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
+# {"indices": [102, 16, 18, ...], "values": [0.22, 0.11, 0.15, ...]}
 
 # store BM25 params as json
 bm25.dump("bm25_params.json")
