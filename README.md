@@ -165,6 +165,26 @@ encoder.encode_queries(["Who jumped over the lazy dog?"])
 Pinecone text also supports Azure OpenAI API. To use it, you need to import the `AzureOpenAIEncoder` class instead of `OpenAIEncoder`. You also need to pass Azure specific environment variables to the constructor, along with your specific embeddings  deployment as the model name. For more information please follow the `AzureOpenAIEncoder` documentation.
 
 
+### Jina AI models
+
+When using the `JinaEncoder`, you need to provide an API key for the Jina Embeddings API, and store it in the `JINA_API_KEY` environment variable before you import the encoder.
+
+By default the encoder will use `jina-embeddings-v2-base-en`. You can also specify a different model name using the `model_name` parameter.
+
+#### Usage
+
+```python
+from pinecone_text.dense import JinaEncoder
+
+encoder = JinaEncoder() # defaults to the recommended model - "text-embedding-ada-002"
+
+encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
+# [[-0.62586284, -0.54578537, 0.5570845, ...]]
+
+encoder.encode_queries(["Who jumped over the lazy dog?"])
+# [[-0.43374294, -0.42069837, 0.773763, ...]]
+```
+
 ## Combining Sparse and Dense Encodings for Hybrid Search
 To combine sparse and dense encodings for hybrid search, you can use the `hybrid_convex_scale` method on your query.
 

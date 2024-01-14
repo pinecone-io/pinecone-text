@@ -10,10 +10,10 @@ DEFAULT_DIMENSION = 1536
 @pytest.fixture(params=[OpenAIEncoder, AzureOpenAIEncoder])
 def openai_encoder(request):
     if request.param == OpenAIEncoder:
-        return request.param()
+        return request.param(max_retries=3)
     else:
         model_name = os.environ.get("EMBEDDINGS_AZURE_OPENAI_DEPLOYMENT_NAME")
-        return request.param(model_name=model_name)
+        return request.param(model_name=model_name, max_retries=3)
 
 
 @pytest.mark.parametrize("encoder_class", [OpenAIEncoder, AzureOpenAIEncoder])
