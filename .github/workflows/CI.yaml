@@ -47,7 +47,7 @@ jobs:
     - name: Run unit tests
       run: |
         if [ "${{ matrix.python-version }}" == "3.12" ]; then
-          poetry run pytest tests/unit --ignore=tests/unit/test_sentence_transformer_encoder.py --ignore=tests/unit/test_splade.py --ignore=tests/unit/test_hybrid_convex_scale.py
+          poetry run pytest --ignore=tests/system --ignore=tests/unit/test_sentence_transformer_encoder.py --ignore=tests/unit/test_splade.py --ignore=tests/unit/test_hybrid_convex_scale.py
         else
           poetry run pytest tests/unit
         fi
