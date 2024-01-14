@@ -32,11 +32,6 @@ If you wish to use `OpenAIEncoder` dense encoder, you will need to install the `
 pip install pinecone-text[openai]
 ```
 
-If you wish to use `JinaEncoder` dense encoder, you will need to install the `jina` extra:
-```bash
-pip install pinecone-text[jina]
-```
-
 ## Sparse Encoding
 
 To convert your own text corpus to sparse vectors, you can either use [BM25](https://www.pinecone.io/learn/semantic-search/#bm25) or [SPLADE](https://www.pinecone.io/learn/splade/).
