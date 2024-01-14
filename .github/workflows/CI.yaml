@@ -31,7 +31,7 @@ jobs:
     - name: Install dependencies
       run: |
         if [ "${{ matrix.python-version }}" == "3.12" ]; then
-          poetry install --with dev openai cohere
+          poetry install --with dev -E openai -E cohere
         else
           poetry install --with dev --all-extras
         fi
