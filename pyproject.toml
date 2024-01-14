@@ -17,8 +17,8 @@ nltk = "^3.6.5"
 openai =  { version = "^1.2.3", optional = true }
 cohere = { version = "^4.37", optional = true }
 numpy = [
-    { version = ">=1.21.5,<=1.25.2", python = "<3.12" },
-    { version = ">=1.25", python = ">=3.12" }
+    { version = ">=1.21.5,<2.0", python = "<3.12" },
+    { version = ">=1.26,<2.0", python = ">=3.12" }
 ]
 
 [tool.poetry.extras]
