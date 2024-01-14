@@ -17,13 +17,13 @@ nltk = "^3.6.5"
 numpy = ">=1.21.5,<=1.25.2"
 openai =  { version = "^1.2.3", optional = true }
 cohere = { version = "^4.37", optional = true }
+requests = "^2.25.0"
 
 [tool.poetry.extras]
 splade = ["torch", "transformers", "sentence-transformers"]
 dense = ["torch", "transformers", "sentence-transformers", "openai"]
 openai = ["openai"]
 cohere = ["cohere"]
-jina = ["requests"]
 
 [tool.poetry.group.dev]
 optional = true
