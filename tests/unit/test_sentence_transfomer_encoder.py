@@ -1,11 +1,13 @@
 import pytest
+import sys
 from unittest.mock import patch
 from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
-import pinecone_text.dense.sentence_transformer_encoder
+
 
 DEFAULT_DIMENSION = 384
 
 
+@pytest.mark.skipif(sys.version_info >= (3, 12), reason="not supported in python 3.12")
 class TestSentenceTransformerEncoder:
     def setup_method(self):
         self.corpus = [

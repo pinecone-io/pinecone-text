@@ -1,11 +1,12 @@
 from unittest.mock import patch
 
-import torch
 import pytest
+import sys
 from pytest import raises
 from pinecone_text.sparse import SpladeEncoder
 
 
+@pytest.mark.skipif(sys.version_info >= (3, 12), reason="not supported in python 3.12")
 class TestSplade:
     def test_splade_single_doc_inference(self):
         splade = SpladeEncoder()
@@ -64,6 +65,8 @@ class TestSplade:
         ],
     )
     def test_init_cuda_available(self, cuda_available, device_input, expected_device):
+        import torch
+
         system_cuda_available = torch.cuda.is_available()
 
         with patch("torch.cuda.is_available", return_value=cuda_available):
