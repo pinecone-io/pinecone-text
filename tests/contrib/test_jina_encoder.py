@@ -57,7 +57,7 @@ def test_encode_invalid_input(encoding_function):
 )
 def test_encode_too_many_tokens(encoding_function):
     encoder = JinaEncoder()
-    with pytest.raises(RuntimeError, match='.+?cannot exceed 8192 tokens.+?'):
+    with pytest.raises(RuntimeError, match=".+?cannot exceed 8192 tokens.+?"):
         _ = getattr(encoder, encoding_function)("text is too long" * 10000)
 
 
@@ -70,5 +70,5 @@ def test_encode_too_many_tokens(encoding_function):
 )
 def test_encode_too_many_sentences(encoding_function):
     encoder = JinaEncoder()
-    with pytest.raises(RuntimeError, match='.+?larger than the largest allowed.+?'):
+    with pytest.raises(RuntimeError, match=".+?larger than the largest allowed.+?"):
         _ = getattr(encoder, encoding_function)(["too many inputs"] * 3000)

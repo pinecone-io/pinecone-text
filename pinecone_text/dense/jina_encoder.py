@@ -27,11 +27,11 @@ class JinaEncoder(BaseDenseEncoder):
         :param kwargs: Additional arguments
         """
         if api_key is None:
-            api_key = os.environ.get('JINA_API_KEY', None)
+            api_key = os.environ.get("JINA_API_KEY", None)
 
         if api_key is None:
             raise ValueError(
-                'JinaEncoder requires an API key to work. Please provide `api_key` argument or set `JINA_API_KEY` environment variable'
+                "JinaEncoder requires an API key to work. Please provide `api_key` argument or set `JINA_API_KEY` environment variable"
             )
         self._model_name = model_name
         self._session = requests.Session()

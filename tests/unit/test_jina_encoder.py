@@ -15,8 +15,8 @@ from pinecone_text.dense import JinaEncoder
     ],
 )
 def test_encode_single_text(encoding_function):
-    encoder = JinaEncoder(api_key='test_api_key')
-    with patch('requests.sessions.Session.post') as mock_post:
+    encoder = JinaEncoder(api_key="test_api_key")
+    with patch("requests.sessions.Session.post") as mock_post:
         # Configure the mock to return a specific response
         mock_response = requests.Response()
         mock_response.status_code = 200
@@ -44,8 +44,8 @@ def test_encode_single_text(encoding_function):
     ],
 )
 def test_encode_multiple_text(encoding_function):
-    encoder = JinaEncoder(api_key='test_api_key')
-    with patch('requests.sessions.Session.post') as mock_post:
+    encoder = JinaEncoder(api_key="test_api_key")
+    with patch("requests.sessions.Session.post") as mock_post:
         # Configure the mock to return a specific response
         mock_response = requests.Response()
         mock_response.status_code = 200
@@ -73,14 +73,14 @@ def test_error_no_api_key():
 
 @pytest.fixture()
 def env_api_key():
-    previous_jina_api_key = os.environ.get('JINA_API_KEY', None)
+    previous_jina_api_key = os.environ.get("JINA_API_KEY", None)
     if previous_jina_api_key is None:
-        os.environ['JINA_API_KEY'] = 'test_api_key'
+        os.environ["JINA_API_KEY"] = "test_api_key"
     yield
     if previous_jina_api_key is None:
-        os.environ.pop('JINA_API_KEY')
+        os.environ.pop("JINA_API_KEY")
     else:
-        os.environ['JINA_API_KEY'] = previous_jina_api_key
+        os.environ["JINA_API_KEY"] = previous_jina_api_key
 
 
 def test_init_with_api_key_from_environ(env_api_key):
