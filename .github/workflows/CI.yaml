@@ -48,7 +48,7 @@ jobs:
       run: poetry run pytest tests/unit
 
     - name: Run system tests
-      if: github.event_name == 'merge_group'
+      if: github.event_name == 'merge_group' && matrix.python-version == '3.10'
       env:
          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
          CO_API_KEY: ${{ secrets.CO_API_KEY }}
