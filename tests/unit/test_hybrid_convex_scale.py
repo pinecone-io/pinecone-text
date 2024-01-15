@@ -1,10 +1,12 @@
 import pytest
+import sys
 from pytest import approx
 from pinecone_text.hybrid import hybrid_convex_scale
 from pinecone_text.sparse.splade_encoder import SpladeEncoder
 from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
 
 
+@pytest.mark.skipif(sys.version_info >= (3, 12), reason="not supported in python 3.12")
 class TestHybridConvexScale:
     def test_hybrid_convex_scale_dummy_data(self):
         dense = [1, 2, -3]

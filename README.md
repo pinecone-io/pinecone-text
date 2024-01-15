@@ -95,6 +95,11 @@ These parameters can be specified when initializing the BM25Encoder class. Pleas
 
 Currently the `SpladeEncoder` class supprts only the [naver/splade-cocondenser-ensembledistil](https://huggingface.co/naver/splade-cocondenser-ensembledistil) model, and follows [SPLADE V2](https://arxiv.org/abs/2109.10086) implementation.
 
+> **_📝 NOTE:_**
+> 
+> Currently pinecone text not supoorts SPLADE with python 3.12 due to compatibility issues with pytorch
+>
+
 #### Usage
 
 For an end-to-end example, you can refer to our Quora dataset generation with SPLADE [notebook](https://colab.research.google.com/github/pinecone-io/examples/blob/master/learn/search/semantic-search/sparse/splade/splade-vector-generation.ipynb).
@@ -130,6 +135,11 @@ For dense embedding we also provide a thin wrapper for the following models:
 ### Sentence Transformers models
 
 When using `SentenceTransformerEncoder`, the models are downloaded from huggingface and run locally. Also, if cuda is available, the model will automatically run on GPU. You can explicitly override the device using the `device` parameter in the constructor.
+
+> **_📝 NOTE:_**
+> 
+> Currently pinecone text not supoorts sentence transformers with python 3.12 due to compatibility issues with pytorch
+>
 
 #### Usage
 ```python
