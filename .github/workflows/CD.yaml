@@ -34,14 +34,12 @@ jobs:
       with:
         title: Release ${{ env.VERSION }}
 
-    - name: Check python versions
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: 1.3.2
+    
+    - name: Publish to pypi
       run: |
-        python --version
-        python3 --version
-        which python3.10
-        python3.10 --version
-
-    - name: Build and publish to pypi
-      run: |
-        curl -sSL https://install.python-poetry.org | python3.10 -
-        poetry publish -u pinecone -p ${{ secrets.PYPI_PASSWORD }} --build
+        poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+        poetry publish --build
