@@ -61,11 +61,11 @@ bm25.fit(corpus)
 
 # Encode a new document (for upsert to Pinecone index)
 doc_sparse_vector = bm25.encode_documents("The brown fox is quick")
-# {"indices": [102, 18, 12, ...], "values": [0.21, 0.38, 0.15, ...]}
+# {"indices": [102, 18, 12, ...], "values": [0.22, 0.38, 0.15, ...]}
 
 # Encode a query (for search in Pinecone index)
 query_sparse_vector = bm25.encode_queries("Which fox is brown?")
-# {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]}
+# {"indices": [102, 16, 18, ...], "values": [0.22, 0.11, 0.15, ...]}
 
 # store BM25 params as json
 bm25.dump("bm25_params.json")
@@ -172,6 +172,29 @@ encoder.encode_queries(["Who jumped over the lazy dog?"])
 # [[0.11, 0.43, 0.67, ...]]
 ```
 
+Pinecone text also supports Azure OpenAI API. To use it, you need to import the `AzureOpenAIEncoder` class instead of `OpenAIEncoder`. You also need to pass Azure specific environment variables to the constructor, along with your specific embeddings  deployment as the model name. For more information please follow the `AzureOpenAIEncoder` documentation.
+
+
+### Jina AI models
+
+When using the `JinaEncoder`, you need to provide an API key for the Jina Embeddings API, and store it in the `JINA_API_KEY` environment variable before you import the encoder.
+
+By default the encoder will use `jina-embeddings-v2-base-en`. You can also specify a different model name using the `model_name` parameter.
+
+#### Usage
+
+```python
+from pinecone_text.dense import JinaEncoder
+
+encoder = JinaEncoder() # defaults to the recommended model - "text-embedding-ada-002"
+
+encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
+# [[-0.62586284, -0.54578537, 0.5570845, ...]]
+
+encoder.encode_queries(["Who jumped over the lazy dog?"])
+# [[-0.43374294, -0.42069837, 0.773763, ...]]
+```
+
 ## Combining Sparse and Dense Encodings for Hybrid Search
 To combine sparse and dense encodings for hybrid search, you can use the `hybrid_convex_scale` method on your query.
 
@@ -193,5 +216,5 @@ dense_vector = sentence_transformer.encode_queries("Which fox is brown?")
 
 # combine sparse and dense vectors
 hybrid_dense, hybrid_sparse = hybrid_convex_scale(dense_vector, sparse_vector, alpha=0.8)
-# ([-0.21, 0.38, 0.15, ...], {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.15, ...]})
+# ([-0.21, 0.38, 0.15, ...], {"indices": [102, 16, 18, ...], "values": [0.21, 0.11, 0.18, ...]})
 ```

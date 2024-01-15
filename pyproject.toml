@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pinecone-text"
-version = "0.7.1"
+version = "0.7.2"
 description = "Text utilities library by Pinecone.io"
 authors = ["Pinecone.io"]
 readme = "README.md"
@@ -20,6 +20,9 @@ numpy = [
     { version = ">=1.21.5,<2.0", python = "<3.12" },
     { version = ">=1.26,<2.0", python = ">=3.12" }
 ]
+requests = "^2.25.0"
+types-requests = "^2.25.0"
+
 
 [tool.poetry.extras]
 splade = ["torch", "transformers", "sentence-transformers"]
