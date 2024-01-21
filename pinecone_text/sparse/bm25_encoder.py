@@ -152,8 +152,8 @@ class BM25Encoder(BaseSparseEncoder):
     def _encode_single_query(self, text: str) -> SparseVector:
         indices, query_tf = self._tf(text)
 
-        tf = np.array([self.doc_freq.get(idx, 1) for idx in indices])  # type: ignore
-        idf = np.log((self.n_docs + 1) / (tf + 0.5))  # type: ignore
+        df = np.array([self.doc_freq.get(idx, 1) for idx in indices])  # type: ignore
+        idf = np.log((self.n_docs + 1) / (df + 0.5))  # type: ignore
         idf_norm = idf / idf.sum()
         return {
             "indices": indices,
