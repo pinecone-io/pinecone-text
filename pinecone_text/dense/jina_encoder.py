@@ -33,6 +33,7 @@ class JinaEncoder(BaseDenseEncoder):
             raise ValueError(
                 "JinaEncoder requires an API key to work. Please provide `api_key` argument or set `JINA_API_KEY` environment variable"
             )
+        super().__init__()
         self._model_name = model_name
         self._session = requests.Session()
         self._session.headers.update(

@@ -1,11 +1,21 @@
-from typing import List, Union
+from typing import List, Union, Any, Optional
 from abc import ABC, abstractmethod
+from functools import cached_property
 
 
 class BaseDenseEncoder(ABC):
+    def __init__(self, *, dimension: Optional[int] = None, **kwargs: Any):
+        self._dimension = dimension
+
+    @cached_property
+    def dimension(self) -> int:
+        if self._dimension is None:
+            return len(self.encode_documents("hello"))
+        return self._dimension
+
     @abstractmethod
     def encode_documents(
-        self, texts: Union[str, List[str]]
+            self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
         """
         encode documents to a dense vector (for upsert to pinecone)
@@ -17,7 +27,7 @@ class BaseDenseEncoder(ABC):
 
     @abstractmethod
     def encode_queries(
-        self, texts: Union[str, List[str]]
+            self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
         """
         encode queries to a dense vector

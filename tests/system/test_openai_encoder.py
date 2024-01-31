@@ -3,7 +3,6 @@ import os
 from pinecone_text.dense import OpenAIEncoder, AzureOpenAIEncoder
 from openai import BadRequestError, AuthenticationError
 
-
 DEFAULT_DIMENSION = 1536
 
 
@@ -87,3 +86,18 @@ def test_encode_invalid_input(openai_encoder, encoding_function):
 def test_encode_error_handling(openai_encoder, encoding_function):
     with pytest.raises(BadRequestError):
         encode_by_type(openai_encoder, encoding_function, "text is too long" * 10000)
+
+
+def test_dimension(openai_encoder):
+    assert openai_encoder.dimension == DEFAULT_DIMENSION
+
+
+def test_openai_encoder_with_dimension():
+    dimension = 10
+    encoder = OpenAIEncoder(
+        model_name="text-embedding-3-small",
+        dimension=dimension
+    )
+    assert encoder.dimension == dimension
+    result = encoder.encode_documents("test text")
+    assert len(result) == dimension

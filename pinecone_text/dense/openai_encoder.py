@@ -38,6 +38,8 @@ class OpenAIEncoder(BaseDenseEncoder):
     def __init__(
         self,
         model_name: str = "text-embedding-ada-002",
+        *,
+        dimension: Optional[int] = None,
         **kwargs: Any,
     ):
         if not _openai_installed:
@@ -46,7 +48,9 @@ class OpenAIEncoder(BaseDenseEncoder):
                 "dependencies by running: "
                 "`pip install pinecone-text[openai]"
             )
+        super().__init__(dimension=dimension)
         self._model_name = model_name
+        self._dimension = dimension
         self._client = self._create_client(**kwargs)
 
     @staticmethod
@@ -76,9 +80,13 @@ class OpenAIEncoder(BaseDenseEncoder):
             )
 
         try:
-            response = self._client.embeddings.create(
-                input=texts_input, model=self._model_name
+            params = dict(
+                input=texts_input,
+                model=self._model_name,
             )
+            if self._dimension:
+                params["dimensions"] = self._dimension
+            response = self._client.embeddings.create(**params)
         except OpenAIError as e:
             # TODO: consider wrapping external provider errors
             raise e
