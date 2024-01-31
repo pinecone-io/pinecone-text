@@ -94,10 +94,7 @@ def test_dimension(openai_encoder):
 
 def test_openai_encoder_with_dimension():
     dimension = 10
-    encoder = OpenAIEncoder(
-        model_name="text-embedding-3-small",
-        dimension=dimension
-    )
+    encoder = OpenAIEncoder(model_name="text-embedding-3-small", dimension=dimension)
     assert encoder.dimension == dimension
     result = encoder.encode_documents("test text")
     assert len(result) == dimension

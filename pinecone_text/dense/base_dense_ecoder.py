@@ -15,7 +15,7 @@ class BaseDenseEncoder(ABC):
 
     @abstractmethod
     def encode_documents(
-            self, texts: Union[str, List[str]]
+        self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
         """
         encode documents to a dense vector (for upsert to pinecone)
@@ -27,7 +27,7 @@ class BaseDenseEncoder(ABC):
 
     @abstractmethod
     def encode_queries(
-            self, texts: Union[str, List[str]]
+        self, texts: Union[str, List[str]]
     ) -> Union[List[float], List[List[float]]]:
         """
         encode queries to a dense vector
