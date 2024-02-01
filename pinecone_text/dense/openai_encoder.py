@@ -50,7 +50,9 @@ class OpenAIEncoder(BaseDenseEncoder):
             )
         super().__init__()
 
-        assert dimension > 0, "dimension must be a positive integer"
+        if dimension is not None:
+            assert dimension > 0, "dimension must be a positive integer"
+
         self._model_name = model_name
         self._dimension = dimension
         self._client = self._create_client(**kwargs)
