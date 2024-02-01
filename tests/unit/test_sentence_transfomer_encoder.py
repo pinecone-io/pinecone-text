@@ -3,7 +3,6 @@ import sys
 from unittest.mock import patch
 from pinecone_text.dense.sentence_transformer_encoder import SentenceTransformerEncoder
 
-
 DEFAULT_DIMENSION = 384
 
 
@@ -73,10 +72,25 @@ class TestSentenceTransformerEncoder:
         ],
     )
     def test_init_cuda_available(self, cuda_available, device_input, expected_device):
+        import torch
+
+        system_cuda_available = torch.cuda.is_available()
+        document_encoder_name = "sentence-transformers/all-MiniLM-L6-v2"
+
         with patch("torch.cuda.is_available", return_value=cuda_available):
-            encoder = SentenceTransformerEncoder(
-                document_encoder_name="sentence-transformers/all-MiniLM-L6-v2",
-                device=device_input,
-            )
-            assert str(encoder.document_encoder._target_device) == expected_device
-            assert str(encoder.query_encoder._target_device) == expected_device
+            if not system_cuda_available and expected_device == "cuda":
+                with pytest.raises(
+                        AssertionError, match="Torch not compiled with CUDA enabled"
+                ):
+                    SentenceTransformerEncoder(
+                        document_encoder_name=document_encoder_name,
+                        device=device_input,
+                    )
+            else:
+                encoder = SentenceTransformerEncoder(
+                    document_encoder_name=document_encoder_name,
+                    device=device_input
+                )
+
+                assert str(encoder.document_encoder._target_device) == expected_device
+                assert str(encoder.query_encoder._target_device) == expected_device
