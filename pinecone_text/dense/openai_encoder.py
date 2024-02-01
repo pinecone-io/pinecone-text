@@ -1,5 +1,5 @@
 import os
-from typing import Union, List, Any, Optional
+from typing import Union, List, Any, Optional, Dict
 from pinecone_text.dense.base_dense_ecoder import BaseDenseEncoder
 
 try:
@@ -80,7 +80,7 @@ class OpenAIEncoder(BaseDenseEncoder):
             )
 
         try:
-            params = dict(
+            params: Dict[str, Any] = dict(
                 input=texts_input,
                 model=self._model_name,
             )
