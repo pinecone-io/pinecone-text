@@ -158,12 +158,12 @@ encoder.encode_queries(["Who jumped over the lazy dog?"])
 
 When using the `OpenAIEncoder`, you need to provide an API key for the OpenAI API, and store it in the `OPENAI_API_KEY` environment variable before you import the encoder.
 
-By default the encoder will use `text-embedding-ada-002` as recommended by OpenAI. You can also specify a different model name using the `model_name` parameter.
+By default the encoder will use `text-embedding-3-small` as recommended by OpenAI. You can also specify a different model name using the `model_name` parameter.
 #### Usage
 ```python
 from pinecone_text.dense import OpenAIEncoder
 
-encoder = OpenAIEncoder() # defaults to the recommended model - "text-embedding-ada-002"
+encoder = OpenAIEncoder() # defaults to the recommended model - "text-embedding-3-small"
 
 encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
 # [[0.21, 0.38, 0.15, ...]]
@@ -186,7 +186,7 @@ By default the encoder will use `jina-embeddings-v2-base-en`. You can also speci
 ```python
 from pinecone_text.dense import JinaEncoder
 
-encoder = JinaEncoder() # defaults to the recommended model - "text-embedding-ada-002"
+encoder = JinaEncoder()
 
 encoder.encode_documents(["The quick brown fox jumps over the lazy dog"])
 # [[-0.62586284, -0.54578537, 0.5570845, ...]]
