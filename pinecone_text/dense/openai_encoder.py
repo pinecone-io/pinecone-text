@@ -49,6 +49,8 @@ class OpenAIEncoder(BaseDenseEncoder):
                 "`pip install pinecone-text[openai]"
             )
         super().__init__()
+
+        assert dimension > 0, "dimension must be a positive integer"
         self._model_name = model_name
         self._dimension = dimension
         self._client = self._create_client(**kwargs)
@@ -85,7 +87,6 @@ class OpenAIEncoder(BaseDenseEncoder):
                 model=self._model_name,
             )
             if self._dimension is not None:
-                assert self._dimension > 0, "dimension must be a positive integer"
                 params["dimensions"] = self._dimension
             response = self._client.embeddings.create(**params)
         except OpenAIError as e:
