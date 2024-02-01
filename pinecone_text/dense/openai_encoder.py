@@ -37,7 +37,7 @@ class OpenAIEncoder(BaseDenseEncoder):
 
     def __init__(
         self,
-        model_name: str = "text-embedding-ada-002",
+        model_name: str = "text-embedding-3-small",
         *,
         dimension: Optional[int] = None,
         **kwargs: Any,
