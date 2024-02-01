@@ -1,8 +1,18 @@
-from typing import List, Union
+from typing import List, Union, Any, Optional
 from abc import ABC, abstractmethod
+from functools import cached_property
 
 
 class BaseDenseEncoder(ABC):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._dimension: Optional[int] = None
+
+    @cached_property
+    def dimension(self) -> int:
+        if self._dimension is None:
+            return len(self.encode_documents("hello"))
+        return self._dimension
+
     @abstractmethod
     def encode_documents(
         self, texts: Union[str, List[str]]

@@ -106,3 +106,8 @@ def test_encode_error_handling(encoder, encoding_function):
         mock_embeddings.create.side_effect = ValueError("OpenAI API error")
         with pytest.raises(ValueError, match="OpenAI API error"):
             encode_by_type(encoder, encoding_function, "test text")
+
+
+def test_openai_encoder_invalid_dimension():
+    with pytest.raises(AssertionError):
+        OpenAIEncoder(model_name="text-embedding-3-small", dimension=0)

@@ -48,7 +48,7 @@ class SentenceTransformerEncoder(BaseDenseEncoder):
                 "Failed to import sentence transformers. Make sure you install dense "
                 "extra dependencies by running: `pip install pinecone-text[dense]`"
             )
-
+        super().__init__()
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.document_encoder = SentenceTransformer(
             document_encoder_name, device=device

@@ -66,6 +66,7 @@ class CohereEncoder(BaseDenseEncoder):
                 + "\n"
                 + "\n".join([f"- {x}" for x in CohereEncoderName.list_models()])
             )
+        super().__init__()
         self._model_name = model_name
         self._client = cohere.Client(api_key=api_key, **kwargs)
 
