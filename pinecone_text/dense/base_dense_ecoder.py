@@ -4,8 +4,8 @@ from functools import cached_property
 
 
 class BaseDenseEncoder(ABC):
-    def __init__(self, *, dimension: Optional[int] = None, **kwargs: Any):
-        self._dimension = dimension
+    def __init__(self, *args, **kwargs):
+        self._dimension = None
 
     @cached_property
     def dimension(self) -> int:
