@@ -80,7 +80,7 @@ class TestSentenceTransformerEncoder:
         with patch("torch.cuda.is_available", return_value=cuda_available):
             if not system_cuda_available and expected_device == "cuda":
                 with pytest.raises(
-                        AssertionError, match="Torch not compiled with CUDA enabled"
+                    AssertionError, match="Torch not compiled with CUDA enabled"
                 ):
                     SentenceTransformerEncoder(
                         document_encoder_name=document_encoder_name,
@@ -88,8 +88,7 @@ class TestSentenceTransformerEncoder:
                     )
             else:
                 encoder = SentenceTransformerEncoder(
-                    document_encoder_name=document_encoder_name,
-                    device=device_input
+                    document_encoder_name=document_encoder_name, device=device_input
                 )
 
                 assert str(encoder.document_encoder._target_device) == expected_device
