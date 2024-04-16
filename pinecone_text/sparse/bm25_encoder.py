@@ -98,6 +98,41 @@ class BM25Encoder(BaseSparseEncoder):
         self.avgdl = sum_doc_len / n_docs
         return self
 
+    def update(self, new_corpus: List[str]) -> "BM25Encoder":
+        """
+        Update BM25 by incorporating new documents into the existing model
+
+        Args:
+            new_corpus: list of new texts to update BM25 with
+        """
+        if self.doc_freq is None or self.n_docs is None or self.avgdl is None:
+            raise ValueError("BM25 must be fit before updating")
+
+        sum_doc_len = 0
+        doc_freq_counter: Counter = Counter()
+
+        for doc in tqdm(new_corpus):
+            if not isinstance(doc, str):
+                raise ValueError("new_corpus must be a list of strings")
+
+            indices, tf = self._tf(doc)
+            if len(indices) == 0:
+                continue
+            self.n_docs += 1
+            sum_doc_len += sum(tf)
+
+            # Count the number of documents that contain each token
+            doc_freq_counter.update(indices)
+
+        # Merge the new document frequencies with the existing ones
+        for idx, freq in doc_freq_counter.items():
+            self.doc_freq[idx] = self.doc_freq.get(idx, 0) + freq
+
+        # Update the average document length
+        self.avgdl = (self.avgdl * (self.n_docs - len(new_corpus)) + sum_doc_len) / self.n_docs
+
+        return self
+
     def encode_documents(
         self, texts: Union[str, List[str]]
     ) -> Union[SparseVector, List[SparseVector]]:
