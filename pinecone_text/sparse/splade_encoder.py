@@ -1,6 +1,7 @@
 from typing import List, Union, Optional
 from os import PathLike
 import os
+import json
 try:
     import torch
 except (OSError, ImportError, ModuleNotFoundError) as e:
@@ -82,7 +83,7 @@ class SpladeEncoder(BaseSparseEncoder):
 
         with open(config_path, 'r') as config_file:
             config = json.load(config_file)
-            return config.get("model_type") == expected_model_name
+            return config.get("_name_or_path") == expected_model_name
 
     def _download_model(self, model_dir, model_name):
         # Ensure the directory exists
