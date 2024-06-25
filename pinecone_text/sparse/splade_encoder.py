@@ -64,11 +64,15 @@ class SpladeEncoder(BaseSparseEncoder):
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.device = device
         expected_model_name = "naver/splade-cocondenser-ensembledistil"
-        if not self._is_correct_model(model_dir, expected_model_name):
-            self.tokenizer,self.model=self._download_model(model_dir, expected_model_name)
+        if model_dir:
+            if not self._is_correct_model(model_dir, expected_model_name):
+                self.tokenizer,self.model=self._download_model(model_dir, expected_model_name)
+            else:
+                self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
+                self.model = AutoModelForMaskedLM.from_pretrained(model_dir).to(self.device)
         else:
-            self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
-            self.model = AutoModelForMaskedLM.from_pretrained(model_dir).to(self.device)
+            self.tokenizer = AutoTokenizer.from_pretrained(expected_model_name)
+            self.model = AutoModelForMaskedLM.from_pretrained(expected_model_name).to(self.device)
         self.max_seq_length = max_seq_length
     def _is_correct_model(self, model_dir, expected_model_name):
         # Check for the presence of specific files that indicate the correct model
