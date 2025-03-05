@@ -152,7 +152,7 @@ class TestBM25Tokenizer:
             language="english",
         )
 
-        nltk.find("tokenizers/punkt")
+        nltk.find("tokenizers/punkt_tab")
         nltk.find("corpora/stopwords")
 
         assert tokenizer("The quick brown fox jumps over the lazy dog") == [
