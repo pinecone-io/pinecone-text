@@ -2,9 +2,9 @@ import json
 import mmh3
 import numpy as np
 import tempfile
+import requests
 from pathlib import Path
 from tqdm.auto import tqdm
-import wget
 from typing import List, Optional, Dict, Union, Tuple
 from collections import Counter
 
@@ -258,7 +258,11 @@ class BM25Encoder(BaseSparseEncoder):
         url = "https://storage.googleapis.com/pinecone-datasets-dev/bm25_params/msmarco_bm25_params_v4_0_0.json"
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_path = Path(tmp_dir, "msmarco_bm25_params.json")
-            wget.download(url, str(tmp_path))
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            with open(tmp_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):
+                    f.write(chunk)
             bm25.load(str(tmp_path))
         return bm25
 
