@@ -44,7 +44,7 @@ class BM25Tokenizer:
             nltk.download("stopwords")
 
     def __call__(self, text: str) -> List[str]:
-        tokens = word_tokenize(text)
+        tokens = word_tokenize(text, self.language)
         if self.lower_case:
             tokens = [word.lower() for word in tokens]
         if self.remove_punctuation:
