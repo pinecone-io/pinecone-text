@@ -21,7 +21,14 @@ mmh3 = "^4.1.0"
 nltk = "^3.9.1"
 openai =  { version = "^1.2.3", optional = true }
 cohere = { version = "^4.37", optional = true }
-numpy = ">=1.21.5"
+# torch <2.3 (used on Python 3.9, above) is built against the numpy 1.x ABI and
+# raises "Numpy is not available" at runtime under numpy 2.x, so cap numpy <2 on
+# Python <3.10 to match. Keep the open range on >=3.10 where torch >=2.3 supports
+# numpy 2.x. See https://github.com/pinecone-io/pinecone-text/issues/101
+numpy = [
+    { version = ">=1.21.5,<2", python = "<3.10" },
+    { version = ">=1.21.5", python = ">=3.10" },
+]
 requests = "^2.25.0"
 types-requests = "^2.25.0"
 python-dotenv = "^1.0.1"
