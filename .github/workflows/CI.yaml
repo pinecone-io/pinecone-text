@@ -4,6 +4,9 @@ on:
   - pull_request
   - merge_group
 
+permissions:
+  contents: read
+
 jobs:
   run-tests:
     name: Run tests
@@ -25,7 +28,7 @@ jobs:
         shell: bash
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
