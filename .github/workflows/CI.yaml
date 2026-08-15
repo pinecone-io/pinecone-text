@@ -4,6 +4,10 @@ on:
   - pull_request
   - merge_group
 
+# Least-privilege default: CI only reads the repo to run tests.
+permissions:
+  contents: read
+
 jobs:
   run-tests:
     name: Run tests

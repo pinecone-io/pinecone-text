@@ -3,6 +3,10 @@ name: CD
 on:
   workflow_dispatch:
 
+# Release creates a git tag and a GitHub Release; PyPI publish uses PYPI_TOKEN.
+permissions:
+  contents: write
+
 jobs:
 
   release:
